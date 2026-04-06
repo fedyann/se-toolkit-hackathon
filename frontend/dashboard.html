@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindLog — Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+    <!-- Navigation bar -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">MindLog</a>
+        <div class="navbar-links">
+            <a href="index.html">Journal</a>
+            <a href="dashboard.html" class="active">Dashboard</a>
+        </div>
+    </nav>
+
+    <div class="page">
+
+        <!-- Page heading -->
+        <div class="page-heading">
+            <h1>Your patterns</h1>
+            <p>A look at your mood trends and cognitive distortions over time.</p>
+        </div>
+
+        <!-- Mood over time chart -->
+        <div class="card">
+            <div class="card-title">Mood over time</div>
+            <div class="chart-container">
+                <canvas id="mood-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Distortion breakdown chart -->
+        <div class="card">
+            <div class="card-title">Distortion breakdown</div>
+            <div class="chart-container">
+                <canvas id="distortion-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- AI weekly summary -->
+        <div class="summary-card" id="summary-area">
+            <div class="loading">Generating summary…</div>
+        </div>
+
+    </div>
+
+    <script>
+        /**
+         * Load dashboard data from GET /api/dashboard,
+         * then render charts and request an AI summary.
+         */
+        async function loadDashboard() {
+            try {
+                const res = await fetch("/api/dashboard");
+                if (!res.ok) throw new Error("Failed to load dashboard");
+
+                const data = await res.json();
+
+                renderMoodChart(data.mood_over_time);
+                renderDistortionChart(data.distortion_counts);
+                generateSummary(data.last_7_entries);
+            } catch (err) {
+                document.getElementById("summary-area").innerHTML =
+                    '<div class="empty-state" style="color:var(--red-text);">Failed to load dashboard data.</div>';
+            }
+        }
+
+        /**
+         * Render a line chart of mood over time.
+         * Dates are reversed (newest first) for readability.
+         */
+        function renderMoodChart(moodData) {
+            const ctx = document.getElementById("mood-chart").getContext("2d");
+
+            // Reverse so oldest is on the left.
+            const labels = moodData.map(d => d.date).reverse();
+            const values = moodData.map(d => d.mood).reverse();
+
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels,
+                    datasets: [{
+                        label: "Mood",
+                        data: values,
+                        borderColor: "#7C6F9F",
+                        backgroundColor: "rgba(124, 111, 159, 0.08)",
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 3,
+                        pointBackgroundColor: "#7C6F9F",
+                        borderWidth: 2,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: "#E2D9CE" },
+                            ticks: {
+                                color: "#8C7E72",
+                                font: { family: "Inter", size: 11 },
+                                maxRotation: 45,
+                            },
+                        },
+                        y: {
+                            min: 1,
+                            max: 10,
+                            ticks: {
+                                stepSize: 1,
+                                color: "#8C7E72",
+                                font: { family: "Inter", size: 11 },
+                            },
+                            grid: { color: "#E2D9CE" },
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Render a horizontal bar chart of distortion frequency.
+         */
+        function renderDistortionChart(counts) {
+            const ctx = document.getElementById("distortion-chart").getContext("2d");
+
+            const labels = Object.keys(counts);
+            const values = Object.values(counts);
+
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels,
+                    datasets: [{
+                        label: "Occurrences",
+                        data: values,
+                        backgroundColor: "#EDE9F5",
+                        borderColor: "#7C6F9F",
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        barThickness: 20,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: "y",
+                    plugins: {
+                        legend: { display: false },
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: { color: "#E2D9CE" },
+                            ticks: {
+                                color: "#8C7E72",
+                                font: { family: "Inter", size: 11 },
+                                stepSize: 1,
+                            },
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: {
+                                color: "#8C7E72",
+                                font: { family: "Inter", size: 12 },
+                            },
+                        }
+                    }
+                }
+            });
+        }
+
+        /**
+         * Send the last 7 entries to POST /api/summary and display the result.
+         */
+        async function generateSummary(last7) {
+            const area = document.getElementById("summary-area");
+
+            if (last7.length === 0) {
+                area.innerHTML = '<div class="empty-state">Not enough entries for a summary yet. Keep journaling.</div>';
+                return;
+            }
+
+            try {
+                const res = await fetch("/api/summary", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(last7),
+                });
+
+                if (!res.ok) throw new Error("Failed to generate summary");
+
+                const data = await res.json();
+                area.innerHTML = `
+                    <span class="summary-quote-mark">"</span>
+                    <div class="summary-text">${escapeHtml(data.summary)}</div>
+                    <span class="summary-attribution">Generated by AI</span>
+                `;
+            } catch (err) {
+                area.innerHTML = '<div class="empty-state" style="color:var(--red-text);">Could not generate summary.</div>';
+            }
+        }
+
+        /** Escape HTML to prevent XSS. */
+        function escapeHtml(text) {
+            const div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Load everything on page load.
+        loadDashboard();
+    </script>
+</body>
+</html>

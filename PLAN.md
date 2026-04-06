@@ -1,80 +1,68 @@
-# MindLog — Implementation Plan
+# MindLog — Development Plan
 
-## Product idea
+## Version 1: Core Feature (Must Work End-to-End)
 
-A daily journal where you log your mood and a negative thought,
-and AI identifies the cognitive distortion, reframes it,
-and tracks your emotional patterns over time.
+### Goal
+A single-page web app where users can log a mood and negative thought,
+get AI-powered distortion analysis + reframe, and see past entries.
 
-**End user:** Anyone dealing with stress or negative thinking patterns —
-students, people curious about CBT techniques.
+### Backend
+- [x] `POST /api/entries` — accepts `mood` (int) + `thought` (text), calls
+  Qwen LLM, saves result to PostgreSQL, returns the full entry with
+  distortion + reframe
+- [x] `GET /api/entries` — returns all past entries, newest first
+- [x] PostgreSQL table: `entries` (id, mood, thought, distortion, reframe,
+  created_at)
+- [x] LLM prompt: system prompt instructs Qwen to return strict JSON with
+  `distortion` and `reframe` fields
+- [x] Error handling: if LLM returns invalid JSON, return a fallback response
 
-**Problem solved:** People rarely notice their own recurring negative
-thought patterns. MindLog makes them visible and gently challenges
-them using AI.
+### Frontend
+- [x] Mood slider (1–10) with live display
+- [x] Text input for the negative thought
+- [x] Submit button that calls `POST /api/entries`
+- [x] Response area showing distortion name + reframe
+- [x] List of past entries below the form
 
----
-
-## Version 1 — Core check-in with AI analysis
-
-**One-line goal:** User submits a mood rating and a thought,
-AI identifies the cognitive distortion and offers a reframe,
-result is saved and shown.
-
-### Components
-
-**Backend (FastAPI)**
-- `POST /entries` — receives mood (1–10) and thought text,
-  calls the AI, saves the result to the database, returns the analysis
-- `GET /entries` — returns all past entries for the journal view
-
-**Database (PostgreSQL)**
-- One table: `entries`
-  - `id`, `mood` (int), `thought` (text), `distortion` (text),
-    `reframe` (text), `created_at` (timestamp)
-
-**Frontend (HTML/JS)**
-- A single page with:
-  - A mood slider (1–10)
-  - A text field: "What negative thought are you having?"
-  - A submit button
-  - A response section that shows the distortion name and the reframe
-  - A simple list of past entries below
-
-### What "done" looks like
-- User fills in the form, submits, and sees a meaningful AI response
-- The entry is saved and appears in the list below
-- No crashes, no empty responses
+### Infrastructure
+- [x] Docker Compose: backend, postgres, caddy
+- [x] Caddy reverse proxy: serves frontend at `/`, proxies `/api` to backend
+- [x] Port 42002 exposed externally
 
 ---
 
-## Version 2 — Dashboard and pattern tracking
+## Version 2: Dashboard
 
-**One-line goal:** Show the user their emotional patterns over time
-with a mood chart and distortion breakdown.
+### Goal
+A second page showing emotional patterns over time with charts and an
+AI-generated weekly summary.
 
-### What is added on top of Version 1
+### New Backend Endpoints
+- [ ] `GET /api/dashboard` — returns:
+  - `mood_over_time`: list of `{date, mood}` for the last 30 days
+  - `distortion_counts`: dict of distortion name → count
+  - `last_7_entries`: the 7 most recent entries (for summary context)
+- [ ] `POST /api/summary` — accepts last 7 entries, returns AI-generated
+  summary paragraph ("Based on these entries, what patterns do you notice?")
 
-**Backend**
-- `GET /dashboard` — returns aggregated data:
-  mood average per day, count of each distortion type
+### New Frontend
+- [ ] `dashboard.html` with:
+  - Line chart of mood over time (Chart.js from CDN)
+  - Horizontal bar chart of distortion frequency
+  - AI summary paragraph
 
-**Database**
-- No schema changes — Version 2 reads the same `entries` table
+### Notes
+- The `GET /api/dashboard` and `POST /api/summary` endpoints are already
+  implemented in `backend/main.py` — they just need the frontend to use them.
+- The `dashboard.html` file is already scaffolded with Chart.js integration.
+- Version 2 is mostly a matter of testing and polishing the existing code.
 
-**Frontend — new dashboard page**
-- Mood over time: a simple line chart (Chart.js or plain SVG)
-- Most frequent distortions: a small bar chart or ranked list
-- A short AI-generated weekly summary:
-  "This week you mostly experienced all-or-nothing thinking,
-  often on low-mood days."
+---
 
-**Deployment**
-- All services Dockerized: backend, postgres, frontend via Caddy
-- Accessible at the VM's public IP
+## Timeline (3 Days)
 
-### What "done" looks like
-- Dashboard page loads with real data from the database
-- Mood chart shows at least the last 7 days
-- Distortion breakdown shows which patterns appear most
-- App is reachable from a browser without running anything locally
+| Day | Tasks                                    |
+|-----|------------------------------------------|
+| 1   | Version 1 complete — all files written, Docker Compose working, end-to-end test passing |
+| 2   | Version 2 dashboard — charts, summary, polish UI |
+| 3   | Testing, bug fixes, README, final submission prep |

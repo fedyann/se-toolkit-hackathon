@@ -1,0 +1,488 @@
+/* ============================================================
+   MindLog — Calm, modern, warm design
+   ============================================================ */
+
+/* --- Google Fonts: Inter --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
+
+/* --- CSS Custom Properties --- */
+:root {
+    --bg:          #F7F4F0;
+    --surface:     #FFFFFF;
+    --surface-2:   #F0EBE3;
+    --border:      #E2D9CE;
+    --text-main:   #2C2825;
+    --text-muted:  #8C7E72;
+    --accent:      #7C6F9F;
+    --accent-soft: #EDE9F5;
+    --green:       #5E8C6A;
+    --green-soft:  #EAF2EC;
+    --red-soft:    #F5EAE9;
+    --red-text:    #8C4A46;
+}
+
+/* --- Reset --- */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* --- Body --- */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-main);
+    background: var(--bg);
+    min-height: 100vh;
+}
+
+/* --- Page wrapper --- */
+.page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 48px 24px 64px;
+}
+
+/* ============================================================
+   Navigation bar
+   ============================================================ */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.navbar-brand {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-main);
+    text-decoration: none;
+}
+
+.navbar-links {
+    display: flex;
+    gap: 24px;
+}
+
+.navbar-links a {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding-bottom: 2px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.navbar-links a:hover {
+    color: var(--text-main);
+}
+
+.navbar-links a.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
+
+/* ============================================================
+   Page heading
+   ============================================================ */
+.page-heading {
+    margin-bottom: 32px;
+}
+
+.page-heading h1 {
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.page-heading p {
+    font-size: 15px;
+    color: var(--text-muted);
+}
+
+/* ============================================================
+   Cards (shared)
+   ============================================================ */
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+}
+
+.card-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-main);
+    margin-bottom: 20px;
+}
+
+/* ============================================================
+   Mood slider
+   ============================================================ */
+.mood-section {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.mood-display {
+    margin-bottom: 20px;
+}
+
+.mood-number {
+    font-size: 48px;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+}
+
+.mood-emoji {
+    font-size: 48px;
+    line-height: 1;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
+.mood-label {
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 6px;
+}
+
+/* Custom range slider */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+}
+
+/* ============================================================
+   Thought input
+   ============================================================ */
+.form-label {
+    display: block;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.thought-input {
+    width: 100%;
+    min-height: 100px;
+    padding: 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-main);
+    background: var(--surface-2);
+    border: 1px solid transparent;
+    border-radius: 12px;
+    outline: none;
+    resize: vertical;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.thought-input::placeholder {
+    color: var(--text-muted);
+}
+
+.thought-input:focus {
+    background: var(--surface);
+    border-color: var(--border);
+}
+
+/* ============================================================
+   Submit button
+   ============================================================ */
+.submit-btn {
+    display: block;
+    width: 100%;
+    padding: 12px 28px;
+    margin-top: 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: #FFFFFF;
+    background: var(--accent);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.submit-btn:hover {
+    opacity: 0.88;
+}
+
+.submit-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* Loading dots animation on the button */
+.submit-btn .loading-dots span {
+    display: inline-block;
+    opacity: 0;
+    animation: dotFade 1.4s infinite;
+}
+
+.submit-btn .loading-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.submit-btn .loading-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes dotFade {
+    0%, 60%, 100% { opacity: 0; }
+    30% { opacity: 1; }
+}
+
+/* ============================================================
+   AI response card (fade + slide up on appear)
+   ============================================================ */
+.response-area {
+    display: none;
+    margin-top: 24px;
+    opacity: 0;
+    transform: translateY(12px);
+}
+
+.response-area.visible {
+    display: block;
+    animation: fadeSlideUp 0.4s ease-out forwards;
+}
+
+@keyframes fadeSlideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.response-section-label {
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.distortion-pill {
+    display: inline-block;
+    background: var(--red-soft);
+    color: var(--red-text);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.reframe-box {
+    background: var(--green-soft);
+    border-left: 3px solid var(--green);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 16px;
+    color: var(--text-main);
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+/* ============================================================
+   Past entries list
+   ============================================================ */
+.entry-item {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.entry-item:last-child {
+    border-bottom: none;
+}
+
+.entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+}
+
+.entry-mood {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--accent);
+}
+
+.entry-date {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.entry-thought {
+    font-style: italic;
+    color: var(--text-muted);
+    font-size: 15px;
+    margin: 8px 0;
+}
+
+.entry-distortion {
+    margin-bottom: 8px;
+}
+
+.entry-reframe {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* ============================================================
+   Empty state
+   ============================================================ */
+.empty-state {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 15px;
+    padding: 24px 0;
+}
+
+/* ============================================================
+   Error message
+   ============================================================ */
+.error {
+    color: var(--red-text);
+    background: var(--red-soft);
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-top: 16px;
+    font-size: 14px;
+    display: none;
+}
+
+.error.visible {
+    display: block;
+}
+
+/* ============================================================
+   Loading text
+   ============================================================ */
+.loading {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+    padding: 16px 0;
+}
+
+/* ============================================================
+   Dashboard charts
+   ============================================================ */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 240px;
+    margin-bottom: 8px;
+}
+
+/* ============================================================
+   AI weekly summary
+   ============================================================ */
+.summary-card {
+    background: var(--accent-soft);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.summary-quote-mark {
+    float: left;
+    font-size: 48px;
+    color: var(--accent);
+    opacity: 0.3;
+    line-height: 1;
+    margin-right: 8px;
+    margin-top: 2px;
+    font-family: Georgia, serif;
+}
+
+.summary-text {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text-main);
+}
+
+.summary-attribution {
+    display: block;
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 16px;
+}
+
+/* ============================================================
+   Mobile (below 600px)
+   ============================================================ */
+@media (max-width: 600px) {
+    .page {
+        padding: 48px 16px 64px;
+    }
+
+    .navbar {
+        padding: 14px 16px;
+    }
+
+    .card {
+        padding: 16px;
+        border-radius: 12px;
+    }
+
+    .mood-number,
+    .mood-emoji {
+        font-size: 36px;
+    }
+
+    .chart-container {
+        height: 240px;
+    }
+}
