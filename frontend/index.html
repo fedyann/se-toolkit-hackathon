@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindLog — CBT Thought Journal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navigation bar -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">MindLog</a>
+        <div class="navbar-links">
+            <a href="index.html" class="active">Journal</a>
+            <a href="dashboard.html">Dashboard</a>
+        </div>
+    </nav>
+
+    <div class="page">
+
+        <!-- Page heading -->
+        <div class="page-heading">
+            <h1>How are you feeling?</h1>
+            <p>Log a thought, and AI will help you reframe it.</p>
+        </div>
+
+        <!-- Entry form card -->
+        <div class="card">
+            <!-- Mood slider -->
+            <div class="mood-section">
+                <div class="mood-display">
+                    <span class="mood-number" id="mood-number">5</span><span class="mood-emoji" id="mood-emoji">😐</span>
+                </div>
+                <div class="mood-label" id="mood-label">okay</div>
+                <input type="range" id="mood" min="1" max="10" value="5">
+            </div>
+
+            <!-- Thought input -->
+            <label class="form-label" for="thought">What negative thought are you having?</label>
+            <textarea class="thought-input" id="thought" placeholder="e.g. I always mess things up, I'm a failure..."></textarea>
+
+            <!-- Submit button -->
+            <button class="submit-btn" id="submit-btn" onclick="submitEntry()">Analyze my thought</button>
+
+            <!-- AI response area -->
+            <div class="response-area" id="response-area">
+                <div class="response-section-label">Cognitive distortion</div>
+                <div class="distortion-pill" id="response-distortion"></div>
+                <div style="margin-top: 16px;">
+                    <div class="response-section-label">A gentler perspective</div>
+                    <div class="reframe-box" id="response-reframe"></div>
+                </div>
+            </div>
+
+            <!-- Error display -->
+            <div class="error" id="error-msg"></div>
+        </div>
+
+        <!-- Past entries -->
+        <div class="card">
+            <div class="card-title">Past entries</div>
+            <div id="entries-list">
+                <div class="loading">Loading entries…</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Mood slider display ---
+        const moodSlider = document.getElementById("mood");
+        const moodNumber = document.getElementById("mood-number");
+        const moodEmoji = document.getElementById("mood-emoji");
+        const moodLabel = document.getElementById("mood-label");
+
+        // Emoji and label maps for each mood range
+        const moodMeta = {
+            low:        { emoji: "😔", label: "low" },
+            struggling: { emoji: "😕", label: "struggling" },
+            okay:       { emoji: "😐", label: "okay" },
+            good:       { emoji: "🙂", label: "good" },
+            great:      { emoji: "😊", label: "great" },
+        };
+
+        function getMoodMeta(val) {
+            if (val <= 2) return moodMeta.low;
+            if (val <= 4) return moodMeta.struggling;
+            if (val <= 6) return moodMeta.okay;
+            if (val <= 8) return moodMeta.good;
+            return moodMeta.great;
+        }
+
+        function updateMoodDisplay() {
+            const val = parseInt(moodSlider.value);
+            const meta = getMoodMeta(val);
+            moodNumber.textContent = val;
+            moodEmoji.textContent = meta.emoji;
+            moodLabel.textContent = meta.label;
+        }
+
+        moodSlider.addEventListener("input", updateMoodDisplay);
+        updateMoodDisplay();
+
+        /**
+         * Submit the form to POST /api/entries.
+         * Shows the AI response on success, or an error message on failure.
+         */
+        async function submitEntry() {
+            const thought = document.getElementById("thought").value.trim();
+            const mood = parseInt(moodSlider.value);
+            const btn = document.getElementById("submit-btn");
+            const responseArea = document.getElementById("response-area");
+            const errorMsg = document.getElementById("error-msg");
+
+            // Reset UI state.
+            errorMsg.classList.remove("visible");
+            responseArea.classList.remove("visible");
+
+            if (!thought) {
+                showError("Please enter a thought.");
+                return;
+            }
+
+            // Show loading state with animated dots.
+            btn.disabled = true;
+            btn.innerHTML = 'Analyzing<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>';
+
+            try {
+                const res = await fetch("/api/entries", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ mood, thought }),
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || "Server error");
+                }
+
+                const data = await res.json();
+
+                // Show the AI response.
+                document.getElementById("response-distortion").textContent = data.distortion;
+                document.getElementById("response-reframe").textContent = data.reframe;
+                responseArea.classList.add("visible");
+
+                // Clear the form.
+                document.getElementById("thought").value = "";
+
+                // Refresh the entries list.
+                loadEntries();
+            } catch (err) {
+                showError("Failed to analyze: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Analyze my thought";
+            }
+        }
+
+        /**
+         * Fetch and display all past entries from GET /api/entries.
+         */
+        async function loadEntries() {
+            const listEl = document.getElementById("entries-list");
+
+            try {
+                const res = await fetch("/api/entries");
+                if (!res.ok) throw new Error("Failed to load entries");
+
+                const entries = await res.json();
+
+                if (entries.length === 0) {
+                    listEl.innerHTML = '<div class="empty-state">No entries yet. Write your first thought above.</div>';
+                    return;
+                }
+
+                // Build HTML for each entry.
+                listEl.innerHTML = entries.map(e => `
+                    <div class="entry-item">
+                        <div class="entry-header">
+                            <span class="entry-mood">${e.mood}</span>
+                            <span class="entry-date">${new Date(e.created_at).toLocaleString()}</span>
+                        </div>
+                        <div class="entry-thought">"${escapeHtml(e.thought)}"</div>
+                        <div class="entry-distortion">
+                            <span class="distortion-pill">${escapeHtml(e.distortion)}</span>
+                        </div>
+                        <div class="entry-reframe">${escapeHtml(e.reframe)}</div>
+                    </div>
+                `).join("");
+            } catch (err) {
+                listEl.innerHTML = '<div class="empty-state" style="color:var(--red-text);">Failed to load entries.</div>';
+            }
+        }
+
+        /** Show an error message. */
+        function showError(msg) {
+            const el = document.getElementById("error-msg");
+            el.textContent = msg;
+            el.classList.add("visible");
+        }
+
+        /** Escape HTML to prevent XSS when rendering user content. */
+        function escapeHtml(text) {
+            const div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Load entries when the page loads.
+        loadEntries();
+    </script>
+</body>
+</html>

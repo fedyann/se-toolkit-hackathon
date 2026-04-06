@@ -1,0 +1,117 @@
+# MindLog — Docker Compose
+#
+# Services:
+#   backend   — FastAPI + Python (CBT journal API)
+#   postgres  — PostgreSQL database
+#   caddy     — Reverse proxy (serves frontend + proxies /api)
+#
+# Exposed on port 42002 (via Caddy).
+
+services:
+  backend:
+    build:
+      context: ./backend
+      args:
+        REGISTRY_PREFIX_DOCKER_HUB: ${REGISTRY_PREFIX_DOCKER_HUB:-}
+    restart: unless-stopped
+    networks:
+      - mindlog-network
+    environment:
+      # Database connection — uses the postgres service name inside Docker.
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=${POSTGRES_DB:-mindlog}
+      - DB_USER=${POSTGRES_USER:-postgres}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      # Qwen LLM API — use the Docker service name + container port (8080).
+      - QWEN_API_BASE_URL=http://qwen-code-api:8080/v1
+      - QWEN_API_KEY=${QWEN_CODE_API_KEY:-unused}
+      - QWEN_MODEL=${QWEN_CODE_API_MODEL:-coder-model}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qwen-code-api:
+        condition: service_started
+
+  postgres:
+    image: ${REGISTRY_PREFIX_DOCKER_HUB:-}postgres:16-alpine
+    restart: unless-stopped
+    networks:
+      - mindlog-network
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-mindlog}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-mindlog}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  caddy:
+    image: ${REGISTRY_PREFIX_DOCKER_HUB:-}caddy:2.11-alpine
+    restart: unless-stopped
+    networks:
+      - mindlog-network
+    ports:
+      # Expose the app on the VM's public port 42002.
+      - "42002:${CADDY_CONTAINER_PORT:-80}"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./frontend:/srv/frontend:ro
+    depends_on:
+      - backend
+
+  # Qwen Code API — provides the LLM via an OpenAI-compatible endpoint.
+  # This is the same service from lab-8. If you already have it running
+  # on the host, you can skip this and just set QWEN_API_BASE_URL to
+  # http://host.docker.internal:42005/v1 instead.
+  qwen-code-api:
+    build:
+      context: ./qwen-code-api
+      args:
+        REGISTRY_PREFIX_DOCKER_HUB: ${REGISTRY_PREFIX_DOCKER_HUB:-}
+    restart: unless-stopped
+    networks:
+      - mindlog-network
+    ports:
+      - "42005:8080"
+    volumes:
+      - ~/.qwen:/mnt/qwen-creds:ro
+    environment:
+      - PORT=8080
+      - ADDRESS=0.0.0.0
+      - DEFAULT_MODEL=${QWEN_CODE_API_MODEL:-coder-model}
+      - LOG_LEVEL=${QWEN_CODE_API_LOG_LEVEL:-error}
+      - MAX_RETRIES=${QWEN_CODE_API_MAX_RETRIES:-5}
+      - RETRY_DELAY_MS=${QWEN_CODE_API_RETRY_DELAY_MS:-1000}
+      - QWEN_CODE_AUTH_USE=${QWEN_CODE_API_AUTH_USE:-true}
+      - QWEN_CODE_LOG_REQUESTS=${QWEN_CODE_API_LOG_REQUESTS:-true}
+      - LOG_REQUESTS=${QWEN_CODE_API_LOG_REQUESTS:-true}
+      - QWEN_CODE_API_KEY=${QWEN_CODE_API_KEY:-}
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - "-c"
+        - |
+          import urllib.request
+          req = urllib.request.Request(
+              'http://localhost:8080/health',
+              headers={'X-API-Key': '${QWEN_CODE_API_KEY:-}'}
+          )
+          urllib.request.urlopen(req)
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  postgres_data:
+
+networks:
+  mindlog-network:
+    name: mindlog-network
+    attachable: true

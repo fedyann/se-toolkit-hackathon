@@ -1,0 +1,19 @@
+# Caddy reverse proxy configuration for MindLog.
+#
+# Serves the static frontend at / and proxies /api to the FastAPI backend.
+# The listener port comes from the CADDY_CONTAINER_PORT env var.
+# The "http://" prefix disables Caddy's automatic HTTPS redirect.
+
+http://:{$CADDY_CONTAINER_PORT} {
+    # Proxy all /api requests to the FastAPI backend.
+    handle /api* {
+        reverse_proxy http://backend:8000
+    }
+
+    # Serve the static frontend files.
+    handle {
+        root * /srv/frontend
+        try_files {path} /index.html
+        file_server
+    }
+}
