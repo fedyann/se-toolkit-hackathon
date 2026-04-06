@@ -3,34 +3,1531 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindLog — CBT Thought Journal</title>
-    <link rel="stylesheet" href="style.css">
+    <title>MindLog — A Space for Growth</title>
+
+    <!-- Google Fonts -->
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Space+Mono:wght@400;700&display=swap');
+
+    <style>
+        /* ============================================================
+           MindLog — Calm Luxury Redesign
+           ============================================================ */
+
+        /* --- CSS Custom Properties --- */
+        :root {
+            --color-bg: #0F1A14;
+            --color-surface: #1C2B20;
+            --color-primary: #4A8C6F;
+            --color-accent: #C9A84C;
+            --color-text: #EAE6DC;
+            --color-muted: #7A9485;
+            --color-border: #2E4035;
+
+            --font-display: 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'DM Sans', -apple-system, sans-serif;
+            --font-mono: 'Space Mono', monospace;
+
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* --- Reset --- */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* --- Animated Background Mesh --- */
+        .bg-mesh {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                radial-gradient(ellipse 80% 60% at 10% 20%, rgba(74, 140, 111, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 90% 80%, rgba(201, 168, 76, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse 50% 50% at 50% 50%, rgba(46, 64, 53, 0.3) 0%, transparent 70%);
+            animation: meshShift 12s ease-in-out infinite alternate;
+        }
+
+        @keyframes meshShift {
+            0% {
+                background:
+                    radial-gradient(ellipse 80% 60% at 10% 20%, rgba(74, 140, 111, 0.08) 0%, transparent 60%),
+                    radial-gradient(ellipse 60% 80% at 90% 80%, rgba(201, 168, 76, 0.05) 0%, transparent 50%),
+                    radial-gradient(ellipse 50% 50% at 50% 50%, rgba(46, 64, 53, 0.3) 0%, transparent 70%);
+            }
+            50% {
+                background:
+                    radial-gradient(ellipse 70% 70% at 30% 60%, rgba(74, 140, 111, 0.1) 0%, transparent 55%),
+                    radial-gradient(ellipse 50% 60% at 70% 30%, rgba(201, 168, 76, 0.06) 0%, transparent 45%),
+                    radial-gradient(ellipse 60% 40% at 40% 40%, rgba(46, 64, 53, 0.35) 0%, transparent 65%);
+            }
+            100% {
+                background:
+                    radial-gradient(ellipse 60% 80% at 60% 10%, rgba(74, 140, 111, 0.07) 0%, transparent 60%),
+                    radial-gradient(ellipse 70% 50% at 20% 70%, rgba(201, 168, 76, 0.04) 0%, transparent 50%),
+                    radial-gradient(ellipse 55% 55% at 70% 60%, rgba(46, 64, 53, 0.28) 0%, transparent 70%);
+            }
+        }
+
+        /* --- Scroll Reveal Base --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Staggered children --- */
+        .stagger-children > * {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
+        }
+
+        .stagger-children.visible > *:nth-child(1) { transition-delay: 0.0s; opacity: 1; transform: translateY(0); }
+        .stagger-children.visible > *:nth-child(2) { transition-delay: 0.1s; opacity: 1; transform: translateY(0); }
+        .stagger-children.visible > *:nth-child(3) { transition-delay: 0.2s; opacity: 1; transform: translateY(0); }
+        .stagger-children.visible > *:nth-child(4) { transition-delay: 0.3s; opacity: 1; transform: translateY(0); }
+        .stagger-children.visible > *:nth-child(5) { transition-delay: 0.4s; opacity: 1; transform: translateY(0); }
+        .stagger-children.visible > *:nth-child(6) { transition-delay: 0.5s; opacity: 1; transform: translateY(0); }
+
+        /* ============================================================
+           Navigation — Frosted Glass
+           ============================================================ */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 48px;
+            transition: background 0.4s ease, backdrop-filter 0.4s ease, padding 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .navbar.scrolled {
+            background: rgba(28, 43, 32, 0.85);
+            backdrop-filter: blur(20px) saturate(1.4);
+            -webkit-backdrop-filter: blur(20px) saturate(1.4);
+            padding: 14px 48px;
+            box-shadow: 0 1px 0 var(--color-border);
+        }
+
+        .navbar-brand {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 600;
+            color: var(--color-text);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .navbar-brand span {
+            color: var(--color-accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 36px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-muted);
+            text-decoration: none;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--color-accent);
+            transition: width 0.3s var(--ease-out-expo);
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--color-text);
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            font-family: var(--font-body);
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--color-bg) !important;
+            background: var(--color-primary);
+            padding: 10px 24px;
+            border-radius: 100px;
+            text-decoration: none;
+            transition: transform 0.3s var(--ease-spring), box-shadow 0.3s ease;
+        }
+
+        .nav-cta::after { display: none !important; }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(74, 140, 111, 0.3);
+        }
+
+        /* Mobile menu toggle */
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .nav-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--color-text);
+            border-radius: 2px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        /* ============================================================
+           Hero Section
+           ============================================================ */
+        .hero {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            padding: 120px 48px 80px;
+            gap: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 600px;
+        }
+
+        .hero-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--color-accent);
+            margin-bottom: 24px;
+            opacity: 0;
+            transform: translateY(15px);
+            animation: heroFadeIn 0.7s var(--ease-out-expo) 0.1s forwards;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(42px, 5.5vw, 76px);
+            font-weight: 400;
+            line-height: 1.08;
+            letter-spacing: -0.03em;
+            color: var(--color-text);
+            margin-bottom: 28px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: heroFadeIn 0.8s var(--ease-out-expo) 0.2s forwards;
+        }
+
+        .hero-title em {
+            font-style: italic;
+            color: var(--color-primary);
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--color-muted);
+            max-width: 480px;
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: heroFadeIn 0.8s var(--ease-out-expo) 0.35s forwards;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: heroFadeIn 0.8s var(--ease-out-expo) 0.5s forwards;
+        }
+
+        @keyframes heroFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Abstract shape */
+        .hero-visual {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 400px;
+        }
+
+        .hero-shape {
+            width: 380px;
+            height: 460px;
+            border-radius: 40% 60% 55% 45% / 50% 40% 60% 50%;
+            background: linear-gradient(135deg, rgba(74, 140, 111, 0.15) 0%, rgba(201, 168, 76, 0.08) 100%);
+            border: 1px solid rgba(74, 140, 111, 0.12);
+            animation: shapeMorph 8s ease-in-out infinite alternate;
+            position: relative;
+        }
+
+        .hero-shape::before {
+            content: '';
+            position: absolute;
+            inset: 30px;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(74, 140, 111, 0.1) 0%, rgba(201, 168, 76, 0.05) 100%);
+            border: 1px solid rgba(74, 140, 111, 0.08);
+        }
+
+        .hero-shape::after {
+            content: '';
+            position: absolute;
+            inset: 60px;
+            border-radius: inherit;
+            background: radial-gradient(circle at 40% 40%, rgba(201, 168, 76, 0.12) 0%, transparent 60%);
+        }
+
+        @keyframes shapeMorph {
+            0% { border-radius: 40% 60% 55% 45% / 50% 40% 60% 50%; }
+            33% { border-radius: 55% 45% 40% 60% / 45% 55% 45% 55%; }
+            66% { border-radius: 45% 55% 60% 40% / 55% 45% 55% 45%; }
+            100% { border-radius: 50% 50% 45% 55% / 40% 60% 50% 50%; }
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--color-accent);
+            opacity: 0.3;
+            animation: particleFloat 6s ease-in-out infinite;
+        }
+
+        .particle:nth-child(2) { top: 20%; left: 15%; animation-delay: -1s; width: 4px; height: 4px; }
+        .particle:nth-child(3) { top: 70%; right: 10%; animation-delay: -3s; width: 8px; height: 8px; opacity: 0.15; }
+        .particle:nth-child(4) { bottom: 15%; left: 30%; animation-delay: -5s; }
+
+        @keyframes particleFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.2); }
+        }
+
+        /* ============================================================
+           Buttons
+           ============================================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: var(--font-body);
+            font-size: 15px;
+            font-weight: 500;
+            padding: 16px 36px;
+            border-radius: 100px;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s var(--ease-spring), box-shadow 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-primary) 0%, #3d7a5e 100%);
+            color: var(--color-bg);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(74, 140, 111, 0.35);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--color-muted);
+            transform: translateY(-2px);
+        }
+
+        /* Ripple effect */
+        .btn .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(0);
+            animation: rippleAnim 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes rippleAnim {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        /* ============================================================
+           Section Shared Styles
+           ============================================================ */
+        .section {
+            padding: 120px 48px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--color-accent);
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(32px, 3.5vw, 52px);
+            font-weight: 400;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            color: var(--color-text);
+            margin-bottom: 20px;
+        }
+
+        .section-desc {
+            font-size: 17px;
+            color: var(--color-muted);
+            max-width: 560px;
+            line-height: 1.75;
+        }
+
+        /* ============================================================
+           How It Works — 3 Steps with Connecting Line
+           ============================================================ */
+        .steps-section {
+            padding: 120px 48px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .steps-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .steps-header .section-desc {
+            margin: 0 auto;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 48px;
+            position: relative;
+        }
+
+        /* Connecting animated line */
+        .steps-grid::before {
+            content: '';
+            position: absolute;
+            top: 48px;
+            left: calc(16.66% + 24px);
+            right: calc(16.66% + 24px);
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--color-border) 20%, var(--color-border) 80%, transparent);
+        }
+
+        .steps-grid::after {
+            content: '';
+            position: absolute;
+            top: 48px;
+            left: calc(16.66% + 24px);
+            width: 0;
+            height: 1px;
+            background: var(--color-primary);
+            animation: lineGrow 2s var(--ease-out-expo) 0.5s forwards;
+        }
+
+        @keyframes lineGrow {
+            to { width: calc(66.66% - 48px); }
+        }
+
+        .step-card {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-number svg {
+            width: 36px;
+            height: 36px;
+            stroke: var(--color-primary);
+            fill: none;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* SVG ring animation */
+        .step-number::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: var(--color-accent);
+            animation: ringSpin 3s linear infinite;
+        }
+
+        @keyframes ringSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        .step-title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: 12px;
+        }
+
+        .step-desc {
+            font-size: 15px;
+            color: var(--color-muted);
+            line-height: 1.7;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+
+        /* ============================================================
+           Journal Section (the actual app)
+           ============================================================ */
+        .journal-section {
+            padding: 120px 48px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .journal-header {
+            text-align: center;
+            margin-bottom: 56px;
+        }
+
+        .journal-header .section-desc {
+            margin: 0 auto;
+        }
+
+        .journal-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 24px;
+            padding: 48px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .journal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+        }
+
+        /* Mood slider */
+        .mood-section {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .mood-display {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .mood-number {
+            font-family: var(--font-display);
+            font-size: 56px;
+            font-weight: 400;
+            color: var(--color-primary);
+            line-height: 1;
+        }
+
+        .mood-emoji {
+            font-size: 40px;
+            line-height: 1;
+        }
+
+        .mood-label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--color-muted);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            max-width: 400px;
+            height: 3px;
+            background: var(--color-border);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+            margin: 16px 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(74, 140, 111, 0.4);
+            transition: transform 0.2s var(--ease-spring);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(74, 140, 111, 0.4);
+        }
+
+        /* Thought input */
+        .form-label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--color-muted);
+            margin-bottom: 12px;
+        }
+
+        .thought-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 20px;
+            font-family: var(--font-body);
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--color-text);
+            background: rgba(15, 26, 20, 0.6);
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            outline: none;
+            resize: vertical;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .thought-input::placeholder {
+            color: var(--color-muted);
+            opacity: 0.6;
+        }
+
+        .thought-input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(74, 140, 111, 0.1);
+        }
+
+        /* Submit button */
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            margin-top: 28px;
+            font-family: var(--font-body);
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            color: var(--color-bg);
+            background: linear-gradient(135deg, var(--color-primary) 0%, #3d7a5e 100%);
+            border: none;
+            border-radius: 100px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s var(--ease-spring), box-shadow 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(74, 140, 111, 0.35);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .submit-btn .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(0);
+            animation: rippleAnim 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        /* Loading dots */
+        .loading-dots span {
+            display: inline-block;
+            opacity: 0;
+            animation: dotFade 1.4s infinite;
+        }
+
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes dotFade {
+            0%, 60%, 100% { opacity: 0; }
+            30% { opacity: 1; }
+        }
+
+        /* AI Response */
+        .response-area {
+            display: none;
+            margin-top: 32px;
+            opacity: 0;
+            transform: translateY(12px);
+        }
+
+        .response-area.visible {
+            display: block;
+            animation: fadeSlideUp 0.5s var(--ease-out-expo) forwards;
+        }
+
+        @keyframes fadeSlideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .response-section-label {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--color-muted);
+            margin-bottom: 8px;
+        }
+
+        .distortion-pill {
+            display: inline-block;
+            background: rgba(201, 168, 76, 0.12);
+            color: var(--color-accent);
+            border: 1px solid rgba(201, 168, 76, 0.2);
+            border-radius: 100px;
+            padding: 6px 18px;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            letter-spacing: 0.04em;
+        }
+
+        .reframe-box {
+            margin-top: 20px;
+            background: rgba(74, 140, 111, 0.08);
+            border-left: 2px solid var(--color-primary);
+            border-radius: 0 12px 12px 0;
+            padding: 20px 24px;
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--color-text);
+        }
+
+        /* Error */
+        .error {
+            color: #c47a7a;
+            background: rgba(196, 122, 122, 0.08);
+            border: 1px solid rgba(196, 122, 122, 0.15);
+            padding: 14px 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error.visible { display: block; }
+
+        /* ============================================================
+           Past Entries
+           ============================================================ */
+        .entries-section {
+            padding: 0 48px 120px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .entries-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 24px;
+            padding: 40px;
+        }
+
+        .entries-title {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: 32px;
+        }
+
+        .entry-item {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .entry-item:last-child { border-bottom: none; }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 10px;
+        }
+
+        .entry-mood {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 400;
+            color: var(--color-primary);
+        }
+
+        .entry-date {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--color-muted);
+            letter-spacing: 0.04em;
+        }
+
+        .entry-thought {
+            font-style: italic;
+            color: var(--color-muted);
+            font-size: 15px;
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .entry-distortion {
+            margin-bottom: 10px;
+        }
+
+        .entry-reframe {
+            font-size: 14px;
+            color: var(--color-muted);
+            line-height: 1.7;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--color-muted);
+            font-size: 15px;
+            padding: 40px 0;
+        }
+
+        .loading {
+            text-align: center;
+            color: var(--color-muted);
+            font-size: 14px;
+            padding: 24px 0;
+        }
+
+        /* ============================================================
+           Service Cards — Asymmetric Grid
+           ============================================================ */
+        .services-section {
+            padding: 120px 48px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .services-header {
+            margin-bottom: 64px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: auto;
+            gap: 24px;
+        }
+
+        .service-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 20px;
+            padding: 36px;
+            transition: transform 0.3s var(--ease-spring), box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.2);
+        }
+
+        .service-card:hover::before { opacity: 1; }
+
+        /* Asymmetric layout */
+        .service-card:nth-child(1) { grid-column: 1 / 8; }
+        .service-card:nth-child(2) { grid-column: 8 / 13; }
+        .service-card:nth-child(3) { grid-column: 1 / 5; }
+        .service-card:nth-child(4) { grid-column: 5 / 13; }
+
+        .service-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: rgba(74, 140, 111, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .service-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--color-primary);
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .service-title {
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-bottom: 10px;
+        }
+
+        .service-desc {
+            font-size: 15px;
+            color: var(--color-muted);
+            line-height: 1.7;
+        }
+
+        /* ============================================================
+           Testimonials Carousel
+           ============================================================ */
+        .testimonials-section {
+            padding: 120px 0;
+            overflow: hidden;
+        }
+
+        .testimonials-header {
+            text-align: center;
+            padding: 0 48px;
+            margin-bottom: 64px;
+        }
+
+        .testimonials-header .section-desc {
+            margin: 0 auto;
+        }
+
+        .carousel-wrapper {
+            position: relative;
+            padding: 0 48px;
+        }
+
+        /* Gradient fade on edges */
+        .carousel-wrapper::before,
+        .carousel-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 80px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .carousel-wrapper::before {
+            left: 0;
+            background: linear-gradient(90deg, var(--color-bg), transparent);
+        }
+
+        .carousel-wrapper::after {
+            right: 0;
+            background: linear-gradient(-90deg, var(--color-bg), transparent);
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 24px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 8px 0 24px;
+        }
+
+        .carousel-track::-webkit-scrollbar { display: none; }
+
+        .testimonial-card {
+            flex: 0 0 380px;
+            scroll-snap-align: start;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 20px;
+            padding: 36px;
+            position: relative;
+        }
+
+        .testimonial-quote {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-style: italic;
+            line-height: 1.6;
+            color: var(--color-text);
+            margin-bottom: 24px;
+        }
+
+        .testimonial-quote::before {
+            content: '\201C';
+            font-size: 48px;
+            color: var(--color-primary);
+            line-height: 0;
+            vertical-align: -0.35em;
+            margin-right: 4px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .testimonial-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-bg);
+        }
+
+        .testimonial-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--color-text);
+        }
+
+        .testimonial-role {
+            font-size: 13px;
+            color: var(--color-muted);
+        }
+
+        /* ============================================================
+           Stats Row
+           ============================================================ */
+        .stats-section {
+            padding: 80px 48px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 32px 16px;
+            border-radius: 20px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            transition: transform 0.3s var(--ease-spring);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-4px);
+        }
+
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: 48px;
+            font-weight: 400;
+            color: var(--color-accent);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--color-muted);
+            letter-spacing: 0.02em;
+        }
+
+        /* ============================================================
+           CTA Section
+           ============================================================ */
+        .cta-section {
+            padding: 120px 48px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 50% at 50% 50%, rgba(74, 140, 111, 0.1) 0%, transparent 70%);
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        .cta-title {
+            font-family: var(--font-display);
+            font-size: clamp(36px, 4vw, 56px);
+            font-weight: 400;
+            line-height: 1.12;
+            letter-spacing: -0.02em;
+            color: var(--color-text);
+            margin-bottom: 20px;
+        }
+
+        .cta-title em {
+            font-style: italic;
+            color: var(--color-primary);
+        }
+
+        .cta-desc {
+            font-size: 17px;
+            color: var(--color-muted);
+            margin-bottom: 40px;
+            line-height: 1.7;
+        }
+
+        /* ============================================================
+           Footer
+           ============================================================ */
+        .footer {
+            border-top: 1px solid var(--color-border);
+            padding: 64px 48px 40px;
+            position: relative;
+        }
+
+        /* Abstract wave SVG */
+        .footer-wave {
+            position: absolute;
+            top: -1px;
+            left: 0;
+            right: 0;
+            height: 40px;
+            overflow: hidden;
+        }
+
+        .footer-wave svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .footer-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+        }
+
+        .footer-brand {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 12px;
+        }
+
+        .footer-brand span { color: var(--color-accent); }
+
+        .footer-tagline {
+            font-size: 14px;
+            color: var(--color-muted);
+            line-height: 1.7;
+            max-width: 280px;
+        }
+
+        .footer-heading {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--color-muted);
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-links a {
+            font-size: 14px;
+            color: var(--color-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover { color: var(--color-text); }
+
+        .footer-bottom {
+            max-width: 1280px;
+            margin: 48px auto 0;
+            padding-top: 24px;
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--color-muted);
+        }
+
+        .footer-bottom a {
+            color: var(--color-muted);
+            text-decoration: none;
+        }
+
+        .footer-bottom a:hover { color: var(--color-text); }
+
+        /* ============================================================
+           Responsive
+           ============================================================ */
+        @media (max-width: 1024px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding: 140px 32px 80px;
+            }
+
+            .hero-content { max-width: 100%; }
+            .hero-subtitle { margin-left: auto; margin-right: auto; }
+            .hero-actions { justify-content: center; }
+            .hero-visual { display: none; }
+
+            .steps-grid { grid-template-columns: 1fr; gap: 40px; }
+            .steps-grid::before,
+            .steps-grid::after { display: none; }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .service-card:nth-child(1),
+            .service-card:nth-child(2),
+            .service-card:nth-child(3),
+            .service-card:nth-child(4) {
+                grid-column: 1 / -1;
+            }
+
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 32px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 16px 24px; }
+            .navbar.scrolled { padding: 12px 24px; }
+
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(15, 26, 20, 0.97);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 32px;
+                z-index: 99;
+            }
+
+            .nav-links.open { display: flex; }
+
+            .nav-toggle { display: flex; z-index: 101; }
+
+            .section,
+            .steps-section,
+            .services-section,
+            .stats-section,
+            .cta-section {
+                padding: 80px 24px;
+            }
+
+            .journal-section,
+            .entries-section {
+                padding-left: 24px;
+                padding-right: 24px;
+            }
+
+            .journal-card,
+            .entries-card {
+                padding: 28px;
+            }
+
+            .testimonial-card { flex: 0 0 300px; }
+
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+
+            .stat-number { font-size: 36px; }
+
+            .footer-content { grid-template-columns: 1fr; gap: 32px; }
+            .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+
+            .carousel-wrapper { padding: 0 24px; }
+        }
+
+        @media (max-width: 480px) {
+            .hero { padding: 120px 20px 60px; }
+            .hero-title { font-size: 36px; }
+            .hero-actions { flex-direction: column; width: 100%; }
+            .btn { width: 100%; }
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Navigation bar -->
-    <nav class="navbar">
-        <a href="index.html" class="navbar-brand">MindLog</a>
-        <div class="navbar-links">
-            <a href="index.html" class="active">Journal</a>
+    <!-- Animated background -->
+    <div class="bg-mesh"></div>
+
+    <!-- ============================================================
+         Navigation
+         ============================================================ -->
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="navbar-brand">Mind<span>Log</span></a>
+        <div class="nav-links" id="navLinks">
+            <a href="#journal" class="active">Journal</a>
             <a href="dashboard.html">Dashboard</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#journal" class="nav-cta">Start Writing</a>
         </div>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
     </nav>
 
-    <div class="page">
+    <!-- ============================================================
+         Hero
+         ============================================================ -->
+    <section class="hero">
+        <div class="hero-content">
+            <p class="hero-eyebrow">A space for growth, not just crisis</p>
+            <h1 class="hero-title">Your thoughts<br>deserve <em>gentle</em><br>attention.</h1>
+            <p class="hero-subtitle">
+                Log a negative thought. Let AI identify the distortion.
+                Receive a kinder perspective. Track your patterns over time.
+            </p>
+            <div class="hero-actions">
+                <a href="#journal" class="btn btn-primary">Begin your journal</a>
+                <a href="#how-it-works" class="btn btn-secondary">Learn more</a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="hero-shape"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+    </section>
 
-        <!-- Page heading -->
-        <div class="page-heading">
-            <h1>How are you feeling?</h1>
-            <p>Log a thought, and AI will help you reframe it.</p>
+    <!-- ============================================================
+         How It Works
+         ============================================================ -->
+    <section class="steps-section" id="how-it-works">
+        <div class="steps-header reveal">
+            <p class="section-label">How it works</p>
+            <h2 class="section-title">Three steps to clarity</h2>
+            <p class="section-desc">
+                A simple practice rooted in Cognitive Behavioral Therapy —
+                made accessible, private, and always available.
+            </p>
         </div>
 
-        <!-- Entry form card -->
-        <div class="card">
+        <div class="steps-grid stagger-children">
+            <div class="step-card">
+                <div class="step-number">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 20h9"/>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                    </svg>
+                </div>
+                <h3 class="step-title">Write it down</h3>
+                <p class="step-desc">
+                    Capture the negative thought and rate your mood.
+                    No judgment — just honesty.
+                </p>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                        <circle cx="12" cy="17" r="0.5" fill="currentColor" stroke="none"/>
+                    </svg>
+                </div>
+                <h3 class="step-title">AI analyzes</h3>
+                <p class="step-desc">
+                    The model identifies the cognitive distortion
+                    and offers a gentle reframe.
+                </p>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
+                <h3 class="step-title">See patterns</h3>
+                <p class="step-desc">
+                    Over time, your dashboard reveals emotional
+                    trends and recurring distortions.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         Journal (the actual app)
+         ============================================================ -->
+    <section class="journal-section" id="journal">
+        <div class="journal-header reveal">
+            <p class="section-label">Your journal</p>
+            <h2 class="section-title">What's on your mind?</h2>
+            <p class="section-desc">
+                Be honest. This space is private, non-judgmental, and here to help.
+            </p>
+        </div>
+
+        <div class="journal-card reveal">
             <!-- Mood slider -->
             <div class="mood-section">
                 <div class="mood-display">
-                    <span class="mood-number" id="mood-number">5</span><span class="mood-emoji" id="mood-emoji">😐</span>
+                    <span class="mood-number" id="mood-number">5</span>
+                    <span class="mood-emoji" id="mood-emoji">😐</span>
                 </div>
                 <div class="mood-label" id="mood-label">okay</div>
                 <input type="range" id="mood" min="1" max="10" value="5">
@@ -43,44 +1540,362 @@
             <!-- Submit button -->
             <button class="submit-btn" id="submit-btn" onclick="submitEntry()">Analyze my thought</button>
 
-            <!-- AI response area -->
+            <!-- AI response -->
             <div class="response-area" id="response-area">
                 <div class="response-section-label">Cognitive distortion</div>
                 <div class="distortion-pill" id="response-distortion"></div>
-                <div style="margin-top: 16px;">
+                <div style="margin-top: 20px;">
                     <div class="response-section-label">A gentler perspective</div>
                     <div class="reframe-box" id="response-reframe"></div>
                 </div>
             </div>
 
-            <!-- Error display -->
+            <!-- Error -->
             <div class="error" id="error-msg"></div>
         </div>
+    </section>
 
-        <!-- Past entries -->
-        <div class="card">
-            <div class="card-title">Past entries</div>
+    <!-- ============================================================
+         Past Entries
+         ============================================================ -->
+    <section class="entries-section">
+        <div class="entries-card reveal">
+            <h3 class="entries-title">Past entries</h3>
             <div id="entries-list">
                 <div class="loading">Loading entries…</div>
             </div>
         </div>
+    </section>
 
-    </div>
+    <!-- ============================================================
+         Service Cards
+         ============================================================ -->
+    <section class="services-section">
+        <div class="services-header reveal">
+            <p class="section-label">Why MindLog</p>
+            <h2 class="section-title">Built for the way you actually think</h2>
+        </div>
 
+        <div class="services-grid stagger-children">
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <h3 class="service-title">Private by design</h3>
+                <p class="service-desc">
+                    Your entries are stored securely in your own database.
+                    No tracking, no ads, no data sharing. This is your space.
+                </p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </div>
+                <h3 class="service-title">Instant insight</h3>
+                <p class="service-desc">
+                    AI-powered analysis in seconds — not days waiting for an appointment.
+                </p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <h3 class="service-title">CBT-rooted</h3>
+                <p class="service-desc">
+                    Based on proven cognitive behavioral therapy techniques.
+                </p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">
+                    <svg viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+                </div>
+                <h3 class="service-title">Patterns over time</h3>
+                <p class="service-desc">
+                    Your dashboard reveals emotional trends, distortion frequency,
+                    and AI-generated weekly summaries so you can see your growth.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         Testimonials
+         ============================================================ -->
+    <section class="testimonials-section">
+        <div class="testimonials-header reveal">
+            <p class="section-label">Voices</p>
+            <h2 class="section-title">What people are saying</h2>
+            <p class="section-desc">
+                Real experiences from people who made journaling a daily practice.
+            </p>
+        </div>
+
+        <div class="carousel-wrapper">
+            <div class="carousel-track">
+                <div class="testimonial-card">
+                    <p class="testimonial-quote">
+                        I never realized how often I catastrophize until I saw it in writing.
+                        MindLog made the pattern impossible to ignore — and that was the first step to changing it.
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">A</div>
+                        <div>
+                            <div class="testimonial-name">Anonymous</div>
+                            <div class="testimonial-role">Student, 20</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <p class="testimonial-quote">
+                        The reframes aren't toxic positivity. They actually feel like something
+                        a kind therapist would say. I use it every evening now.
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">M</div>
+                        <div>
+                            <div class="testimonial-name">Anonymous</div>
+                            <div class="testimonial-role">Developer, 28</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <p class="testimonial-quote">
+                        The dashboard showed me that my mood dips every Sunday.
+                        I would never have noticed that on my own. Now I prepare for it.
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">K</div>
+                        <div>
+                            <div class="testimonial-name">Anonymous</div>
+                            <div class="testimonial-role">Designer, 24</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <p class="testimonial-quote">
+                        It's not a replacement for therapy, but it's a bridge between sessions.
+                        I come to my therapist with actual data now.
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">R</div>
+                        <div>
+                            <div class="testimonial-name">Anonymous</div>
+                            <div class="testimonial-role">Graduate student, 26</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <p class="testimonial-quote">
+                        Simple, beautiful, and it doesn't feel clinical.
+                        That matters when you're already feeling vulnerable.
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">S</div>
+                        <div>
+                            <div class="testimonial-name">Anonymous</div>
+                            <div class="testimonial-role">Writer, 31</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         Stats
+         ============================================================ -->
+    <section class="stats-section">
+        <div class="stats-grid stagger-children">
+            <div class="stat-item">
+                <div class="stat-number" data-target="9" data-suffix="">0</div>
+                <div class="stat-label">Cognitive distortions tracked</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="30" data-suffix="">0</div>
+                <div class="stat-label">Days of mood history</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="2" data-suffix="s">0</div>
+                <div class="stat-label">Average response time</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="100" data-suffix="%">0</div>
+                <div class="stat-label">Private &amp; local</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         CTA
+         ============================================================ -->
+    <section class="cta-section">
+        <div class="cta-content reveal">
+            <h2 class="cta-title">Start writing.<br>Start <em>healing</em>.</h2>
+            <p class="cta-desc">
+                Your first entry takes ten seconds. The patterns take a little longer —
+                but they're worth it.
+            </p>
+            <a href="#journal" class="btn btn-primary">Open your journal</a>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         Footer
+         ============================================================ -->
+    <footer class="footer">
+        <div class="footer-wave">
+            <svg viewBox="0 0 1280 40" preserveAspectRatio="none">
+                <path d="M0,20 C200,40 400,0 640,20 C880,40 1080,0 1280,20 L1280,40 L0,40 Z" fill="var(--color-border)" opacity="0.3"/>
+            </svg>
+        </div>
+        <div class="footer-content">
+            <div>
+                <div class="footer-brand">Mind<span>Log</span></div>
+                <p class="footer-tagline">
+                    A CBT thought journal powered by AI.
+                    Private, simple, and always here when you need it.
+                </p>
+            </div>
+            <div>
+                <h4 class="footer-heading">Product</h4>
+                <ul class="footer-links">
+                    <li><a href="#journal">Journal</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="#how-it-works">How it works</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-heading">Resources</h4>
+                <ul class="footer-links">
+                    <li><a href="https://github.com/fedyann/se-toolkit-hackathon" target="_blank">GitHub</a></li>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">CBT Guide</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-heading">Legal</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Privacy</a></li>
+                    <li><a href="#">Terms</a></li>
+                    <li><a href="#">MIT License</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2026 MindLog. Built with care.</span>
+            <span>Not a replacement for professional therapy.</span>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+         JavaScript
+         ============================================================ -->
     <script>
-        // --- Mood slider display ---
-        const moodSlider = document.getElementById("mood");
-        const moodNumber = document.getElementById("mood-number");
-        const moodEmoji = document.getElementById("mood-emoji");
-        const moodLabel = document.getElementById("mood-label");
+        // --- Navbar scroll-aware (frosted glass) ---
+        const navbar = document.getElementById('navbar');
+        let lastScroll = 0;
 
-        // Emoji and label maps for each mood range
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
+            navbar.classList.toggle('scrolled', currentScroll > 50);
+            lastScroll = currentScroll;
+        }, { passive: true });
+
+        // --- Mobile menu toggle ---
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        navToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
+        });
+
+        // Close mobile menu on link click
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => navLinks.classList.remove('open'));
+        });
+
+        // --- Scroll reveal (IntersectionObserver) ---
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.reveal, .stagger-children').forEach(el => {
+            revealObserver.observe(el);
+        });
+
+        // --- Animated stat counters ---
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const target = parseInt(el.dataset.target);
+                    const suffix = el.dataset.suffix || '';
+                    animateCounter(el, target, suffix);
+                    statObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat-number').forEach(el => {
+            statObserver.observe(el);
+        });
+
+        function animateCounter(el, target, suffix) {
+            const duration = 1500;
+            const start = performance.now();
+
+            function tick(now) {
+                const elapsed = now - start;
+                const progress = Math.min(elapsed / duration, 1);
+                // Ease out cubic
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = Math.round(eased * target);
+                el.textContent = current + suffix;
+                if (progress < 1) requestAnimationFrame(tick);
+            }
+
+            requestAnimationFrame(tick);
+        }
+
+        // --- Ripple effect on buttons ---
+        document.querySelectorAll('.btn, .submit-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+                ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+                this.appendChild(ripple);
+                ripple.addEventListener('animationend', () => ripple.remove());
+            });
+        });
+
+        // --- Mood slider ---
+        const moodSlider = document.getElementById('mood');
+        const moodNumber = document.getElementById('mood-number');
+        const moodEmoji = document.getElementById('mood-emoji');
+        const moodLabel = document.getElementById('mood-label');
+
         const moodMeta = {
-            low:        { emoji: "😔", label: "low" },
-            struggling: { emoji: "😕", label: "struggling" },
-            okay:       { emoji: "😐", label: "okay" },
-            good:       { emoji: "🙂", label: "good" },
-            great:      { emoji: "😊", label: "great" },
+            low:        { emoji: '😔', label: 'low' },
+            struggling: { emoji: '😕', label: 'struggling' },
+            okay:       { emoji: '😐', label: 'okay' },
+            good:       { emoji: '🙂', label: 'good' },
+            great:      { emoji: '😊', label: 'great' },
         };
 
         function getMoodMeta(val) {
@@ -99,74 +1914,63 @@
             moodLabel.textContent = meta.label;
         }
 
-        moodSlider.addEventListener("input", updateMoodDisplay);
+        moodSlider.addEventListener('input', updateMoodDisplay);
         updateMoodDisplay();
 
-        /**
-         * Submit the form to POST /api/entries.
-         * Shows the AI response on success, or an error message on failure.
-         */
+        // --- Submit entry ---
         async function submitEntry() {
-            const thought = document.getElementById("thought").value.trim();
+            const thought = document.getElementById('thought').value.trim();
             const mood = parseInt(moodSlider.value);
-            const btn = document.getElementById("submit-btn");
-            const responseArea = document.getElementById("response-area");
-            const errorMsg = document.getElementById("error-msg");
+            const btn = document.getElementById('submit-btn');
+            const responseArea = document.getElementById('response-area');
+            const errorMsg = document.getElementById('error-msg');
 
-            // Reset UI state.
-            errorMsg.classList.remove("visible");
-            responseArea.classList.remove("visible");
+            errorMsg.classList.remove('visible');
+            responseArea.classList.remove('visible');
 
             if (!thought) {
-                showError("Please enter a thought.");
+                showError('Please enter a thought.');
                 return;
             }
 
-            // Show loading state with animated dots.
             btn.disabled = true;
             btn.innerHTML = 'Analyzing<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>';
 
             try {
-                const res = await fetch("/api/entries", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                const res = await fetch('/api/entries', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ mood, thought }),
                 });
 
                 if (!res.ok) {
                     const err = await res.json();
-                    throw new Error(err.detail || "Server error");
+                    throw new Error(err.detail || 'Server error');
                 }
 
                 const data = await res.json();
 
-                // Show the AI response.
-                document.getElementById("response-distortion").textContent = data.distortion;
-                document.getElementById("response-reframe").textContent = data.reframe;
-                responseArea.classList.add("visible");
+                document.getElementById('response-distortion').textContent = data.distortion;
+                document.getElementById('response-reframe').textContent = data.reframe;
+                responseArea.classList.add('visible');
 
-                // Clear the form.
-                document.getElementById("thought").value = "";
-
-                // Refresh the entries list.
+                document.getElementById('thought').value = '';
                 loadEntries();
             } catch (err) {
-                showError("Failed to analyze: " + err.message);
+                showError('Failed to analyze: ' + err.message);
             } finally {
                 btn.disabled = false;
-                btn.textContent = "Analyze my thought";
+                btn.textContent = 'Analyze my thought';
             }
         }
 
-        /**
-         * Fetch and display all past entries from GET /api/entries.
-         */
+        // --- Load entries ---
         async function loadEntries() {
-            const listEl = document.getElementById("entries-list");
+            const listEl = document.getElementById('entries-list');
 
             try {
-                const res = await fetch("/api/entries");
-                if (!res.ok) throw new Error("Failed to load entries");
+                const res = await fetch('/api/entries');
+                if (!res.ok) throw new Error('Failed to load entries');
 
                 const entries = await res.json();
 
@@ -175,7 +1979,6 @@
                     return;
                 }
 
-                // Build HTML for each entry.
                 listEl.innerHTML = entries.map(e => `
                     <div class="entry-item">
                         <div class="entry-header">
@@ -188,27 +1991,25 @@
                         </div>
                         <div class="entry-reframe">${escapeHtml(e.reframe)}</div>
                     </div>
-                `).join("");
+                `).join('');
             } catch (err) {
-                listEl.innerHTML = '<div class="empty-state" style="color:var(--red-text);">Failed to load entries.</div>';
+                listEl.innerHTML = '<div class="empty-state" style="color:#c47a7a;">Failed to load entries.</div>';
             }
         }
 
-        /** Show an error message. */
         function showError(msg) {
-            const el = document.getElementById("error-msg");
+            const el = document.getElementById('error-msg');
             el.textContent = msg;
-            el.classList.add("visible");
+            el.classList.add('visible');
         }
 
-        /** Escape HTML to prevent XSS when rendering user content. */
         function escapeHtml(text) {
-            const div = document.createElement("div");
+            const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
-        // Load entries when the page loads.
+        // Load entries on page load
         loadEntries();
     </script>
 </body>
