@@ -513,35 +513,25 @@
             position: relative;
         }
 
-        /* Mood selector — blob icons */
-        .mood-selector {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 16px;
+        /* Mood display — single blob + slider */
+        .mood-section {
+            text-align: center;
+            margin-bottom: 28px;
         }
-        .mood-blob {
-            width: 48px; height: 48px;
-            border-radius: 50%;
-            border: 2px solid var(--color-border);
-            background: var(--color-surface);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+
+        .mood-blob-display {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 12px;
+            animation: blobFloat 3s ease-in-out infinite;
         }
-        .mood-blob:hover { transform: scale(1.1); }
-        .mood-blob.active {
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
-            transform: scale(1.1);
+        .mood-blob-display svg {
+            width: 100%;
+            height: 100%;
+            transition: opacity 0.3s ease;
         }
-        .mood-blob svg { width: 24px; height: 24px; }
 
         .mood-value {
-            text-align: center;
             font-family: var(--font-mono);
             font-size: 13px;
             color: var(--color-muted);
@@ -1060,34 +1050,17 @@
         </div>
 
         <div class="journal-card reveal">
-            <!-- Mood blob selector -->
-            <div class="mood-selector" id="mood-selector">
-                <!-- 1-2: sad -->
-                <button class="mood-blob" data-mood="1" title="Very low">
-                    <svg viewBox="0 0 100 100"><path d="M50 8 C72 3, 95 18, 92 44 C89 70, 74 94, 50 92 C26 90, 6 72, 8 48 C10 22, 28 13, 50 8Z" fill="#A8DAFF"/><circle cx="36" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="64" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="37.5" cy="44.5" r="1.5" fill="#fff"/><circle cx="65.5" cy="44.5" r="1.5" fill="#fff"/><ellipse cx="26" cy="56" rx="6" ry="3.5" fill="#FF6B9D" opacity="0.25"/><ellipse cx="74" cy="56" rx="6" ry="3.5" fill="#FF6B9D" opacity="0.25"/><path d="M36 66 Q50 56 64 66" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
-                </button>
-                <!-- 3-4: anxious -->
-                <button class="mood-blob" data-mood="3" title="Struggling">
-                    <svg viewBox="0 0 100 100"><path d="M50 8 C72 3, 95 18, 92 44 C89 70, 74 94, 50 92 C26 90, 6 72, 8 48 C10 22, 28 13, 50 8Z" fill="#FFD166"/><circle cx="36" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="64" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="37.5" cy="44.5" r="1.5" fill="#fff"/><circle cx="65.5" cy="44.5" r="1.5" fill="#fff"/><ellipse cx="26" cy="56" rx="6" ry="3.5" fill="#FF6B9D" opacity="0.25"/><ellipse cx="74" cy="56" rx="6" ry="3.5" fill="#FF6B9D" opacity="0.25"/><path d="M40 64 L60 64" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
-                </button>
-                <!-- 5-6: neutral -->
-                <button class="mood-blob active" data-mood="5" title="Okay">
-                    <svg viewBox="0 0 100 100"><path d="M50 8 C72 3, 95 18, 92 44 C89 70, 74 94, 50 92 C26 90, 6 72, 8 48 C10 22, 28 13, 50 8Z" fill="#E8E4F0"/><circle cx="36" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="64" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="37.5" cy="44.5" r="1.5" fill="#fff"/><circle cx="65.5" cy="44.5" r="1.5" fill="#fff"/><ellipse cx="26" cy="56" rx="6" ry="3.5" fill="#FF6B9D" opacity="0.25"/><ellipse cx="74" cy="56" rx="6" ry="3.5" fill="#FF6B9D" opacity="0.25"/><path d="M36 64 L64 64" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
-                </button>
-                <!-- 7-8: calm -->
-                <button class="mood-blob" data-mood="7" title="Good">
-                    <svg viewBox="0 0 100 100"><path d="M50 8 C72 3, 95 18, 92 44 C89 70, 74 94, 50 92 C26 90, 6 72, 8 48 C10 22, 28 13, 50 8Z" fill="#C8F542"/><circle cx="36" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="64" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="37.5" cy="44.5" r="1.5" fill="#fff"/><circle cx="65.5" cy="44.5" r="1.5" fill="#fff"/><ellipse cx="26" cy="56" rx="6" ry="3.5" fill="#FF6B9D" opacity="0.3"/><ellipse cx="74" cy="56" rx="6" ry="3.5" fill="#FF6B9D" opacity="0.3"/><path d="M36 62 Q50 74 64 62" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
-                </button>
-                <!-- 9-10: happy -->
-                <button class="mood-blob" data-mood="9" title="Great">
-                    <svg viewBox="0 0 100 100"><path d="M50 8 C72 3, 95 18, 92 44 C89 70, 74 94, 50 92 C26 90, 6 72, 8 48 C10 22, 28 13, 50 8Z" fill="#FF6B9D"/><circle cx="36" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="64" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="37.5" cy="44.5" r="1.5" fill="#fff"/><circle cx="65.5" cy="44.5" r="1.5" fill="#fff"/><ellipse cx="26" cy="56" rx="6" ry="3.5" fill="#fff" opacity="0.35"/><ellipse cx="74" cy="56" rx="6" ry="3.5" fill="#fff" opacity="0.35"/><path d="M34 60 Q50 78 66 60" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
-                </button>
-            </div>
-            <div class="mood-value" id="mood-value">mood: 5 / 10</div>
+            <!-- Mood: single blob + slider -->
+            <div class="mood-section">
+                <div class="mood-blob-display" id="mood-blob-display">
+                    <!-- Blob SVG injected by JS based on slider value -->
+                </div>
+                <div class="mood-value" id="mood-value">mood: 5 / 10 — okay</div>
 
-            <!-- Mood slider -->
-            <div class="mood-slider-wrap">
-                <input type="range" id="mood" min="1" max="10" value="5">
+                <!-- Mood slider -->
+                <div class="mood-slider-wrap">
+                    <input type="range" id="mood" min="1" max="10" value="5">
+                </div>
             </div>
 
             <!-- Thought input -->
@@ -1190,41 +1163,69 @@
 
         document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-        // --- Mood blob selector + slider sync ---
-        const moodBlobs = document.querySelectorAll('.mood-blob');
+        // --- Mood: single blob that changes with slider ---
         const moodInput = document.getElementById('mood');
         const moodValue = document.getElementById('mood-value');
+        const blobDisplay = document.getElementById('mood-blob-display');
 
-        function getClosestBlob(val) {
-            const blobValues = [1, 3, 5, 7, 9];
-            let closest = blobValues[0], diff = Math.abs(val - blobValues[0]);
-            for (let i = 1; i < blobValues.length; i++) {
-                const d = Math.abs(val - blobValues[i]);
-                if (d < diff) { diff = d; closest = blobValues[i]; }
-            }
-            return closest;
+        // Each mood has: color, shape path, label, mouth path
+        const moodBlobs = {
+            1: { color: '#A8DAFF', label: 'very low',
+                shape: 'M50 12 C68 8, 90 22, 88 46 C86 68, 70 90, 50 88 C30 86, 12 70, 14 48 C16 26, 32 16, 50 12Z',
+                mouth: 'M36 66 Q50 56 64 66' },
+            2: { color: '#A8DAFF', label: 'low',
+                shape: 'M50 12 C68 8, 90 22, 88 46 C86 68, 70 90, 50 88 C30 86, 12 70, 14 48 C16 26, 32 16, 50 12Z',
+                mouth: 'M38 65 Q50 57 62 65' },
+            3: { color: '#FFD166', label: 'struggling',
+                shape: 'M50 10 C70 6, 92 20, 90 44 C88 68, 72 90, 50 88 C28 86, 10 70, 12 48 C14 24, 30 14, 50 10Z',
+                mouth: 'M40 64 L60 64' },
+            4: { color: '#FFD166', label: 'uneasy',
+                shape: 'M50 10 C70 6, 92 20, 90 44 C88 68, 72 90, 50 88 C28 86, 10 70, 12 48 C14 24, 30 14, 50 10Z',
+                mouth: 'M42 64 L58 64' },
+            5: { color: '#E8E4F0', label: 'okay',
+                shape: 'M50 8 C72 3, 95 18, 92 44 C89 70, 74 94, 50 92 C26 90, 6 72, 8 48 C10 22, 28 13, 50 8Z',
+                mouth: 'M36 64 L64 64' },
+            6: { color: '#E8E4F0', label: 'alright',
+                shape: 'M50 8 C72 3, 95 18, 92 44 C89 70, 74 94, 50 92 C26 90, 6 72, 8 48 C10 22, 28 13, 50 8Z',
+                mouth: 'M38 63 Q50 68 62 63' },
+            7: { color: '#C8F542', label: 'good',
+                shape: 'M50 10 C66 6, 88 18, 86 42 C84 66, 68 88, 50 86 C32 84, 14 68, 16 44 C18 22, 34 14, 50 10Z',
+                mouth: 'M36 62 Q50 74 64 62' },
+            8: { color: '#C8F542', label: 'great',
+                shape: 'M50 10 C66 6, 88 18, 86 42 C84 66, 68 88, 50 86 C32 84, 14 68, 16 44 C18 22, 34 14, 50 10Z',
+                mouth: 'M34 60 Q50 76 66 60' },
+            9: { color: '#FF6B9D', label: 'amazing',
+                shape: 'M60 92 C30 78, 6 58, 8 36 C10 18, 28 8, 42 12 C50 14, 56 20, 60 26 C64 20, 70 14, 78 12 C92 8, 110 18, 112 36 C114 58, 90 78, 60 92Z',
+                mouth: 'M34 58 Q50 78 66 58' },
+            10: { color: '#FF6B9D', label: 'wonderful',
+                shape: 'M60 92 C30 78, 6 58, 8 36 C10 18, 28 8, 42 12 C50 14, 56 20, 60 26 C64 20, 70 14, 78 12 C92 8, 110 18, 112 36 C114 58, 90 78, 60 92Z',
+                mouth: 'M32 56 Q50 80 68 56' },
+        };
+
+        function renderBlob(val) {
+            const m = moodBlobs[val];
+            const blushFill = val >= 9 ? '#fff' : '#FF6B9D';
+            const blushOpacity = val >= 9 ? 0.35 : (val >= 7 ? 0.3 : 0.25);
+            blobDisplay.innerHTML = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="${m.shape}" fill="${m.color}"/>
+                <circle cx="36" cy="46" r="4.5" fill="#1A1A2E"/>
+                <circle cx="64" cy="46" r="4.5" fill="#1A1A2E"/>
+                <circle cx="37.5" cy="44.5" r="1.5" fill="#fff"/>
+                <circle cx="65.5" cy="44.5" r="1.5" fill="#fff"/>
+                <ellipse cx="26" cy="56" rx="6" ry="3.5" fill="${blushFill}" opacity="${blushOpacity}"/>
+                <ellipse cx="74" cy="56" rx="6" ry="3.5" fill="${blushFill}" opacity="${blushOpacity}"/>
+                <path d="${m.mouth}" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/>
+            </svg>`;
         }
-
-        function setActiveBlob(val) {
-            moodBlobs.forEach(b => {
-                b.classList.toggle('active', parseInt(b.dataset.mood) === val);
-            });
-        }
-
-        moodBlobs.forEach(blob => {
-            blob.addEventListener('click', () => {
-                const val = parseInt(blob.dataset.mood);
-                moodInput.value = val;
-                setActiveBlob(val);
-                moodValue.textContent = `mood: ${val} / 10`;
-            });
-        });
 
         moodInput.addEventListener('input', () => {
             const val = parseInt(moodInput.value);
-            moodValue.textContent = `mood: ${val} / 10`;
-            setActiveBlob(getClosestBlob(val));
+            moodValue.textContent = `mood: ${val} / 10 — ${moodBlobs[val].label}`;
+            renderBlob(val);
         });
+
+        // Initial render
+        renderBlob(5);
 
         // --- Tag stickers ---
         document.querySelectorAll('.tag-sticker').forEach(tag => {
