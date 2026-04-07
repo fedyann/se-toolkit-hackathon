@@ -134,12 +134,34 @@
         .nav-links a.active::after { width: 100%; }
 
         /* Breathe cloud button in nav */
-        .breathe-nav-btn {
+        .breathe-btn-wrap {
+            position: relative;
+            display: inline-block;
+            padding-top: 18px;
+        }
+        .breathe-btn-wrap::before,
+        .breathe-btn-wrap::after {
+            content: '';
+            position: absolute;
+            background: #A8DAFF;
+            border-radius: 50%;
+            z-index: 0;
+        }
+        .breathe-btn-wrap::before {
+            width: 36px; height: 36px;
+            left: 18px; top: -2px;
+        }
+        .breathe-btn-wrap::after {
+            width: 26px; height: 26px;
+            left: 44px; top: -8px;
+        }
+        .breathe-btn-wrap .breathe-nav-btn {
             position: relative;
             z-index: 1;
+            display: block;
             background: #A8DAFF;
             border-radius: 50px;
-            padding: 10px 22px;
+            padding: 12px 28px;
             font-family: 'Nunito', sans-serif;
             font-weight: 800;
             font-size: 14px;
@@ -147,32 +169,17 @@
             border: none;
             cursor: pointer;
             text-decoration: none;
+            white-space: nowrap;
             animation: cloud-float 3s ease-in-out infinite;
             transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
         }
-        .breathe-nav-btn::before,
-        .breathe-nav-btn::after {
-            content: '';
-            position: absolute;
-            background: #A8DAFF;
-            border-radius: 50%;
-            transition: background 0.3s ease;
-        }
-        .breathe-nav-btn::before {
-            width: 28px; height: 28px;
-            top: -12px; left: 16px;
-        }
-        .breathe-nav-btn::after {
-            width: 20px; height: 20px;
-            top: -8px; left: 36px;
-        }
-        .breathe-nav-btn:hover {
+        .breathe-btn-wrap .breathe-nav-btn:hover {
             background: #4361EE;
             color: #fff;
             transform: scale(1.05);
         }
-        .breathe-nav-btn:hover::before,
-        .breathe-nav-btn:hover::after {
+        .breathe-btn-wrap:hover::before,
+        .breathe-btn-wrap:hover::after {
             background: #4361EE;
         }
 
@@ -703,10 +710,9 @@
             }
             .mobile-menu a:hover { background: var(--color-bg); }
 
-            .mobile-menu .breathe-nav-btn {
+            .mobile-menu .breathe-btn-wrap {
                 display: inline-block;
                 margin: 24px auto;
-                animation: cloud-float 3s ease-in-out infinite;
             }
 
             .section { padding: 64px 24px; }
@@ -745,7 +751,9 @@
         <div class="nav-links" id="navLinks">
             <a href="/" class="active">Journal</a>
             <a href="dashboard.html">Dashboard</a>
-            <button class="breathe-nav-btn" onclick="openBreathe()">Breathe</button>
+            <div class="breathe-btn-wrap">
+                <button class="breathe-nav-btn" onclick="openBreathe()">Breathe</button>
+            </div>
         </div>
         <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
             <span></span><span></span><span></span>
@@ -757,7 +765,9 @@
         <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">✕</button>
         <a href="/" class="active">Journal</a>
         <a href="dashboard.html">Dashboard</a>
-        <button class="breathe-nav-btn" onclick="openBreathe(); closeMobileMenu();">Breathe</button>
+        <div class="breathe-btn-wrap">
+            <button class="breathe-nav-btn" onclick="openBreathe(); closeMobileMenu();">Breathe</button>
+        </div>
     </div>
 
     <!-- ============================================================

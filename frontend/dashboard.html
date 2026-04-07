@@ -77,32 +77,29 @@
         .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
 
         /* Breathe cloud button in nav */
-        .breathe-nav-btn {
+        .breathe-btn-wrap {
             position: relative;
-            z-index: 1;
-            background: #A8DAFF;
-            border-radius: 50px;
-            padding: 10px 22px;
-            font-family: 'Nunito', sans-serif;
-            font-weight: 800;
-            font-size: 14px;
-            color: #1A1A2E;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
+            display: inline-block;
+            padding-top: 18px;
+        }
+        .breathe-btn-wrap::before,
+        .breathe-btn-wrap::after {
+            content: ''; position: absolute;
+            background: #A8DAFF; border-radius: 50%; z-index: 0;
+        }
+        .breathe-btn-wrap::before { width: 36px; height: 36px; left: 18px; top: -2px; }
+        .breathe-btn-wrap::after { width: 26px; height: 26px; left: 44px; top: -8px; }
+        .breathe-btn-wrap .breathe-nav-btn {
+            position: relative; z-index: 1; display: block;
+            background: #A8DAFF; border-radius: 50px; padding: 12px 28px;
+            font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px;
+            color: #1A1A2E; border: none; cursor: pointer; text-decoration: none;
+            white-space: nowrap;
             animation: cloud-float 3s ease-in-out infinite;
             transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
         }
-        .breathe-nav-btn::before,
-        .breathe-nav-btn::after {
-            content: ''; position: absolute;
-            background: #A8DAFF; border-radius: 50%;
-            transition: background 0.3s ease;
-        }
-        .breathe-nav-btn::before { width: 28px; height: 28px; top: -12px; left: 16px; }
-        .breathe-nav-btn::after { width: 20px; height: 20px; top: -8px; left: 36px; }
-        .breathe-nav-btn:hover { background: #4361EE; color: #fff; transform: scale(1.05); }
-        .breathe-nav-btn:hover::before, .breathe-nav-btn:hover::after { background: #4361EE; }
+        .breathe-btn-wrap .breathe-nav-btn:hover { background: #4361EE; color: #fff; transform: scale(1.05); }
+        .breathe-btn-wrap:hover::before, .breathe-btn-wrap:hover::after { background: #4361EE; }
 
         @keyframes cloud-float {
             0%, 100% { transform: translateY(0px); }
@@ -587,9 +584,8 @@
             }
             .mobile-menu a:hover { background: var(--color-bg); }
 
-            .mobile-menu .breathe-nav-btn {
+            .mobile-menu .breathe-btn-wrap {
                 display: inline-block; margin: 24px auto;
-                animation: cloud-float 3s ease-in-out infinite;
             }
 
             .dashboard { padding: 100px 24px 60px; }
@@ -617,7 +613,9 @@
         <div class="nav-links" id="navLinks">
             <a href="/">Journal</a>
             <a href="dashboard.html" class="active">Dashboard</a>
-            <button class="breathe-nav-btn" onclick="openBreathe()">Breathe</button>
+            <div class="breathe-btn-wrap">
+                <button class="breathe-nav-btn" onclick="openBreathe()">Breathe</button>
+            </div>
         </div>
         <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
     </nav>
@@ -627,7 +625,9 @@
         <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">✕</button>
         <a href="/">Journal</a>
         <a href="dashboard.html" class="active">Dashboard</a>
-        <button class="breathe-nav-btn" onclick="openBreathe(); closeMobileMenu();">Breathe</button>
+        <div class="breathe-btn-wrap">
+            <button class="breathe-nav-btn" onclick="openBreathe(); closeMobileMenu();">Breathe</button>
+        </div>
     </div>
 
     <!-- Dashboard -->
@@ -911,7 +911,6 @@
 
             const avgMood = allEntries.length > 0 ? allEntries.reduce((s, d) => s + d.mood, 0) / allEntries.length : 5;
             const hasNightLog = entries.some(e => { const h = new Date(e.created_at).getHours(); return h >= 22; });
-            const hasCapsule = localStorage.getItem('blobbi_capsules') && JSON.parse(localStorage.getItem('blobbi_capsules')).length > 0;
 
             const wins = [
                 { emoji: '🔥', text: '3-day streak!', unlocked: streak >= 3, hint: 'Log 3 days in a row' },
@@ -919,7 +918,6 @@
                 { emoji: '🌙', text: 'Night owl logger', unlocked: hasNightLog, hint: 'Log after 10pm' },
                 { emoji: '🎯', text: 'First entry ever', unlocked: entries.length > 0, hint: 'Make your first log' },
                 { emoji: '💛', text: 'Calm week', unlocked: allEntries.filter(e => e.mood >= 6).length >= 5, hint: '5 calm days in a row' },
-                { emoji: '✉', text: 'Wrote to the future', unlocked: hasCapsule, hint: 'Write a time capsule' },
             ];
 
             row.innerHTML = wins.map(w => `
