@@ -610,8 +610,7 @@
                 display: none;
                 position: fixed;
                 top: 0; left: 0; right: 0; bottom: 0;
-                background: rgba(253, 250, 245, 0.98);
-                backdrop-filter: blur(20px);
+                background: #FDFAF5;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
@@ -620,9 +619,12 @@
             }
             .nav-links.open { display: flex; }
             .nav-links a {
-                font-size: 20px;
+                font-size: 22px;
+                font-weight: 700;
+                color: #1A1A2E !important;
                 padding: 8px 0;
             }
+            .nav-links a::after { display: none; }
             .nav-toggle { display: flex; z-index: 101; }
             .section { padding: 64px 24px; }
             .journal-section, .entries-section { padding-left: 24px; padding-right: 24px; }

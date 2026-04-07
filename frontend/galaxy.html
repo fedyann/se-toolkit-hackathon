@@ -165,11 +165,12 @@
             .nav-links {
                 display: none; position: fixed;
                 top: 0; left: 0; right: 0; bottom: 0;
-                background: rgba(26, 26, 46, 0.98); backdrop-filter: blur(20px);
+                background: #1A1A2E;
                 flex-direction: column; align-items: center; justify-content: center; gap: 36px; z-index: 99;
             }
             .nav-links.open { display: flex; }
-            .nav-links a { font-size: 20px; padding: 8px 0; }
+            .nav-links a { font-size: 22px; font-weight: 700; color: #FFFFFF !important; padding: 8px 0; }
+            .nav-links a::after { display: none; }
             .nav-toggle { display: flex; z-index: 101; }
             .galaxy-page { padding: 90px 24px 40px; }
             .galaxy-canvas { height: 350px; }
