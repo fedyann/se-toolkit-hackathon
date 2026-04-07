@@ -212,16 +212,39 @@
         /* Responsive */
         @media (max-width: 768px) {
             .navbar { padding: 14px 24px; }
-            .nav-links {
+            .nav-links { display: none; }
+            .nav-links a::after { display: none; }
+
+            .nav-toggle {
+                display: flex; flex-direction: column; gap: 5px;
+                background: none; border: none; cursor: pointer; padding: 8px; z-index: 1001;
+            }
+            .nav-toggle span {
+                display: block; width: 26px; height: 3px;
+                background: var(--color-text); border-radius: 2px;
+            }
+
+            .mobile-menu {
                 display: none; position: fixed;
                 top: 0; left: 0; right: 0; bottom: 0;
-                background: #FDFAF5;
-                flex-direction: column; align-items: center; justify-content: center; gap: 36px; z-index: 99;
+                background: #FFFFFF; z-index: 1000;
+                flex-direction: column; padding-top: 70px; overflow-y: auto;
             }
-            .nav-links.open { display: flex; }
-            .nav-links a { font-size: 22px; font-weight: 700; color: #1A1A2E !important; padding: 8px 0; }
-            .nav-links a::after { display: none; }
-            .nav-toggle { display: flex; z-index: 101; }
+            .mobile-menu.open { display: flex; }
+
+            .mobile-menu-close {
+                position: absolute; top: 18px; right: 24px;
+                background: none; border: none; font-size: 28px;
+                color: var(--color-text); cursor: pointer; padding: 8px; z-index: 1002; line-height: 1;
+            }
+
+            .mobile-menu a {
+                display: block; font-family: var(--font-body); font-size: 1.2rem; font-weight: 700;
+                color: var(--color-text); text-decoration: none;
+                padding: 16px 24px; border-bottom: 1px solid var(--color-border); text-align: left;
+            }
+            .mobile-menu a:hover { background: var(--color-bg); }
+
             .capsule-page { padding: 100px 24px 60px; }
             .date-pills { flex-wrap: wrap; }
             .read-overlay { padding: 24px; }
@@ -250,6 +273,15 @@
         </div>
         <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
     </nav>
+
+    <!-- Mobile menu overlay -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">✕</button>
+        <a href="/">Journal</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="galaxy.html">Galaxy</a>
+        <a href="capsule.html" class="active">Capsule</a>
+    </div>
 
     <main class="capsule-page">
         <div class="capsule-header">
@@ -307,9 +339,11 @@
         const navbar = document.getElementById('navbar');
         window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 30), { passive: true });
         const navToggle = document.getElementById('navToggle');
-        const navLinks = document.getElementById('navLinks');
-        navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
-        navLinks.querySelectorAll('a').forEach(l => l.addEventListener('click', () => navLinks.classList.remove('open')));
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuClose = document.getElementById('mobileMenuClose');
+        navToggle.addEventListener('click', () => mobileMenu.classList.add('open'));
+        mobileMenuClose.addEventListener('click', () => mobileMenu.classList.remove('open'));
+        mobileMenu.querySelectorAll('a').forEach(l => l.addEventListener('click', () => mobileMenu.classList.remove('open')));
 
         let selectedDays = 30;
 

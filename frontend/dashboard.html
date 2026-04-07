@@ -75,6 +75,38 @@
             border-radius: 2px; transition: width 0.3s ease;
         }
         .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+        /* Breathe cloud button in nav */
+        .breathe-nav-btn {
+            position: relative;
+            background: #A8DAFF;
+            border-radius: 50px;
+            padding: 10px 22px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 14px;
+            color: #1A1A2E;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            animation: cloud-float 3s ease-in-out infinite;
+            transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
+        }
+        .breathe-nav-btn::before,
+        .breathe-nav-btn::after {
+            content: ''; position: absolute;
+            background: #A8DAFF; border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+        .breathe-nav-btn::before { width: 28px; height: 28px; top: -12px; left: 16px; }
+        .breathe-nav-btn::after { width: 20px; height: 20px; top: -8px; left: 36px; }
+        .breathe-nav-btn:hover { background: #4361EE; color: #fff; transform: scale(1.05); }
+        .breathe-nav-btn:hover::before, .breathe-nav-btn:hover::after { background: #4361EE; }
+
+        @keyframes cloud-float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-4px); }
+        }
         .nav-cta {
             font-family: var(--font-body); font-size: 14px; font-weight: 700;
             color: var(--color-text) !important; background: var(--color-secondary);
@@ -532,16 +564,45 @@
         }
         @media (max-width: 768px) {
             .navbar { padding: 14px 24px; }
-            .nav-links {
+            .nav-links { display: none; }
+            .nav-links a::after { display: none; }
+            .breathe-nav-btn { display: none; }
+
+            .nav-toggle {
+                display: flex; flex-direction: column; gap: 5px;
+                background: none; border: none; cursor: pointer; padding: 8px; z-index: 1001;
+            }
+            .nav-toggle span {
+                display: block; width: 26px; height: 3px;
+                background: var(--color-text); border-radius: 2px;
+            }
+
+            .mobile-menu {
                 display: none; position: fixed;
                 top: 0; left: 0; right: 0; bottom: 0;
-                background: #FDFAF5;
-                flex-direction: column; align-items: center; justify-content: center; gap: 36px; z-index: 99;
+                background: #FFFFFF; z-index: 1000;
+                flex-direction: column; padding-top: 70px; overflow-y: auto;
             }
-            .nav-links.open { display: flex; }
-            .nav-links a { font-size: 22px; font-weight: 700; color: #1A1A2E !important; padding: 8px 0; }
-            .nav-links a::after { display: none; }
-            .nav-toggle { display: flex; z-index: 101; }
+            .mobile-menu.open { display: flex; }
+
+            .mobile-menu-close {
+                position: absolute; top: 18px; right: 24px;
+                background: none; border: none; font-size: 28px;
+                color: var(--color-text); cursor: pointer; padding: 8px; z-index: 1002; line-height: 1;
+            }
+
+            .mobile-menu a {
+                display: block; font-family: var(--font-body); font-size: 1.2rem; font-weight: 700;
+                color: var(--color-text); text-decoration: none;
+                padding: 16px 24px; border-bottom: 1px solid var(--color-border); text-align: left;
+            }
+            .mobile-menu a:hover { background: var(--color-bg); }
+
+            .mobile-menu .breathe-nav-btn {
+                display: inline-block; margin: 24px auto;
+                animation: cloud-float 3s ease-in-out infinite;
+            }
+
             .dashboard { padding: 100px 24px 60px; }
             .card { padding: 24px; }
             .footer { padding: 32px 24px; }
@@ -569,9 +630,20 @@
             <a href="dashboard.html" class="active">Dashboard</a>
             <a href="galaxy.html">Galaxy</a>
             <a href="capsule.html">Capsule</a>
+            <button class="breathe-nav-btn" onclick="openBreathe()">Breathe</button>
         </div>
         <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
     </nav>
+
+    <!-- Mobile menu overlay -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">✕</button>
+        <a href="/">Journal</a>
+        <a href="dashboard.html" class="active">Dashboard</a>
+        <a href="galaxy.html">Galaxy</a>
+        <a href="capsule.html">Capsule</a>
+        <button class="breathe-nav-btn" onclick="openBreathe(); closeMobileMenu();">Breathe</button>
+    </div>
 
     <!-- Dashboard -->
     <main class="dashboard">
@@ -695,9 +767,12 @@
         const navbar = document.getElementById('navbar');
         window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 30), { passive: true });
         const navToggle = document.getElementById('navToggle');
-        const navLinks = document.getElementById('navLinks');
-        navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
-        navLinks.querySelectorAll('a').forEach(l => l.addEventListener('click', () => navLinks.classList.remove('open')));
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuClose = document.getElementById('mobileMenuClose');
+        navToggle.addEventListener('click', () => mobileMenu.classList.add('open'));
+        mobileMenuClose.addEventListener('click', () => mobileMenu.classList.remove('open'));
+        function closeMobileMenu() { mobileMenu.classList.remove('open'); }
+        mobileMenu.querySelectorAll('a').forEach(l => l.addEventListener('click', () => mobileMenu.classList.remove('open')));
 
         // Scroll reveal
         const revealObserver = new IntersectionObserver((entries) => {
@@ -1022,12 +1097,21 @@
         // ====== FEATURE 3: Breath Bubble ======
         let breatheTimeout = null;
         let breatheCycle = 0;
-        const CIRCUMFERENCE = 2 * Math.PI * 85; // ~534
+        let currentPhase = 0;
+        const CIRCUMFERENCE = 2 * Math.PI * 85;
+
+        const phases = [
+            { label: 'Inhale',  duration: 4000, scale: 1.3, color: '#4361EE', glowSize: 32, glowColor: '#4361EE66' },
+            { label: 'Hold',    duration: 2000, scale: 1.3, color: '#C8F542', glowSize: 32, glowColor: '#C8F54266' },
+            { label: 'Exhale',  duration: 6000, scale: 1.0, color: '#A8DAFF', glowSize: 8,  glowColor: '#A8DAFF33' },
+            { label: 'Rest',    duration: 1000, scale: 1.0, color: '#A8DAFF', glowSize: 8,  glowColor: '#A8DAFF33' },
+        ];
 
         function openBreathe() {
             document.getElementById('breatheOverlay').classList.add('active');
             breatheCycle = 0;
-            runBreathCycle();
+            currentPhase = 0;
+            initBreathing();
         }
 
         function closeBreathe() {
@@ -1035,79 +1119,69 @@
             if (breatheTimeout) clearTimeout(breatheTimeout);
         }
 
-        function setPhase(label, scale, fill, glowColor, durationMs) {
+        function applyPhase(phaseIdx) {
+            const p = phases[phaseIdx];
             const blob = document.getElementById('breatheBlob');
             const path = blob.querySelector('path');
-            blob.style.transition = `transform ${durationMs}ms ease-in-out`;
-            blob.style.transform = `scale(${scale})`;
-            path.style.transition = `fill ${durationMs}ms ease-in-out`;
-            path.setAttribute('fill', fill);
 
-            // Glow via drop-shadow on the SVG
-            blob.style.filter = `drop-shadow(0 0 ${glowColor.size}px ${glowColor.color})`;
+            blob.style.transition = `transform ${p.duration}ms ease-in-out`;
+            blob.style.transform = `scale(${p.scale})`;
+            path.style.transition = `fill ${p.duration}ms ease-in-out`;
+            path.setAttribute('fill', p.color);
+            blob.style.filter = `drop-shadow(0 0 ${p.glowSize}px ${p.glowColor})`;
+            document.getElementById('breatheLabel').textContent = p.label;
 
-            document.getElementById('breatheLabel').textContent = label;
-
-            // Progress ring
             const ring = document.getElementById('ringProgress');
-            ring.style.transition = `stroke-dashoffset ${durationMs}ms linear, stroke 0.5s ease`;
-            ring.style.strokeDashoffset = '0';
-            ring.style.stroke = fill;
+            ring.style.transition = `stroke-dashoffset ${p.duration}ms linear, stroke 0.5s ease`;
+            ring.style.stroke = p.color;
+            requestAnimationFrame(() => {
+                ring.style.strokeDashoffset = '0';
+            });
         }
 
-        function resetRing() {
+        function initBreathing() {
+            const blob = document.getElementById('breatheBlob');
+            const path = blob.querySelector('path');
             const ring = document.getElementById('ringProgress');
+
+            // 1. Set resting state immediately (no transition)
+            blob.style.transition = 'none';
+            blob.style.transform = 'scale(1.0)';
+            path.style.transition = 'none';
+            path.setAttribute('fill', '#A8DAFF');
+            blob.style.filter = 'drop-shadow(0 0 8px #A8DAFF33)';
             ring.style.transition = 'none';
             ring.style.strokeDashoffset = String(CIRCUMFERENCE);
+
+            // 2. Force browser to paint
+            blob.getBoundingClientRect();
+
+            // 3. Now start first phase with transition ready
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    startPhase(0);
+                });
+            });
         }
 
-        function runBreathCycle() {
-            if (breatheCycle >= 4) {
-                document.getElementById('breatheLabel').textContent = 'well done ✦';
-                document.getElementById('breatheCounter').textContent = 'complete';
-                return;
+        function startPhase(idx) {
+            if (idx >= phases.length) {
+                breatheCycle++;
+                if (breatheCycle >= 4) {
+                    document.getElementById('breatheLabel').textContent = 'well done ✦';
+                    document.getElementById('breatheCounter').textContent = 'complete';
+                    return;
+                }
+                idx = 0;
             }
 
+            currentPhase = idx;
             document.getElementById('breatheCounter').textContent = `cycle ${breatheCycle + 1} of 4`;
-
-            // Phase 1: Inhale (4s)
-            resetRing();
-            setPhase('Inhale', 1.3, '#4361EE', { size: 32, color: '#4361EE66' }, 4000);
-            requestAnimationFrame(() => {
-                document.getElementById('ringProgress').style.strokeDashoffset = '0';
-            });
+            applyPhase(idx);
 
             breatheTimeout = setTimeout(() => {
-                // Phase 2: Hold (4s)
-                resetRing();
-                setPhase('Hold', 1.3, '#C8F542', { size: 24, color: '#C8F54266' }, 4000);
-                requestAnimationFrame(() => {
-                    document.getElementById('ringProgress').style.strokeDashoffset = '0';
-                });
-
-                breatheTimeout = setTimeout(() => {
-                    // Phase 3: Exhale (4s)
-                    resetRing();
-                    setPhase('Exhale', 1.0, '#A8DAFF', { size: 8, color: '#A8DAFF33' }, 4000);
-                    requestAnimationFrame(() => {
-                        document.getElementById('ringProgress').style.strokeDashoffset = '0';
-                    });
-
-                    breatheTimeout = setTimeout(() => {
-                        // Phase 4: Hold (4s)
-                        resetRing();
-                        setPhase('Hold', 1.0, '#E8E4F0', { size: 8, color: '#E8E4F033' }, 4000);
-                        requestAnimationFrame(() => {
-                            document.getElementById('ringProgress').style.strokeDashoffset = '0';
-                        });
-
-                        breatheTimeout = setTimeout(() => {
-                            breatheCycle++;
-                            runBreathCycle();
-                        }, 4000);
-                    }, 4000);
-                }, 4000);
-            }, 4000);
+                startPhase(idx + 1);
+            }, phases[idx].duration);
         }
 
         function escapeHtml(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
