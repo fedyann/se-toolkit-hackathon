@@ -200,7 +200,7 @@
         }
 
         .stat-pill {
-            background: var(--color-secondary);
+            background: rgba(200, 245, 66, 0.2);
             border-radius: var(--radius-card);
             padding: 24px 28px;
             display: flex;
@@ -210,7 +210,7 @@
         }
         .stat-pill:hover { transform: translateY(-4px); }
         .stat-pill:nth-child(2) { background: rgba(168, 218, 255, 0.25); }
-        .stat-pill:nth-child(3) { background: rgba(255, 107, 157, 0.1); }
+        .stat-pill:nth-child(3) { background: rgba(255, 107, 157, 0.12); }
 
         .stat-blob {
             width: 44px; height: 44px;
@@ -423,10 +423,14 @@
     <nav class="navbar" id="navbar">
         <a href="/" class="navbar-brand">
             <svg class="blob-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <path d="M50 10 C70 5, 92 20, 90 45 C88 68, 72 92, 50 90 C28 88, 8 70, 10 48 C12 24, 30 15, 50 10Z" fill="#4361EE"/>
-                <circle cx="38" cy="48" r="4" fill="#1A1A2E"/>
-                <circle cx="62" cy="48" r="4" fill="#1A1A2E"/>
-                <path d="M38 62 Q50 72 62 62" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <path d="M50 8 C72 3, 95 18, 92 44 C89 70, 74 94, 50 92 C26 90, 6 72, 8 48 C10 22, 28 13, 50 8Z" fill="#4361EE"/>
+                <circle cx="36" cy="46" r="4.5" fill="#1A1A2E"/>
+                <circle cx="64" cy="46" r="4.5" fill="#1A1A2E"/>
+                <circle cx="37.5" cy="44.5" r="1.5" fill="#fff"/>
+                <circle cx="65.5" cy="44.5" r="1.5" fill="#fff"/>
+                <ellipse cx="26" cy="56" rx="6" ry="3.5" fill="#FF6B9D" opacity="0.35"/>
+                <ellipse cx="74" cy="56" rx="6" ry="3.5" fill="#FF6B9D" opacity="0.35"/>
+                <path d="M36 62 Q50 74 64 62" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/>
             </svg>
             Blobbi
         </a>
@@ -455,21 +459,21 @@
         <!-- Stats Row -->
         <div class="stats-row reveal" id="stats-row">
             <div class="stat-pill">
-                <svg class="stat-blob" viewBox="0 0 100 100"><path d="M50 10 C70 5, 92 20, 90 45 C88 68, 72 92, 50 90 C28 88, 8 70, 10 48 C12 24, 30 15, 50 10Z" fill="#C8F542"/><circle cx="38" cy="48" r="4" fill="#1A1A2E"/><circle cx="62" cy="48" r="4" fill="#1A1A2E"/><path d="M38 62 Q50 72 62 62" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+                <svg class="stat-blob" viewBox="0 0 100 100"><path d="M50 8 C72 3, 95 18, 92 44 C89 70, 74 94, 50 92 C26 90, 6 72, 8 48 C10 22, 28 13, 50 8Z" fill="#C8F542"/><circle cx="36" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="64" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="37.5" cy="44.5" r="1.5" fill="#fff"/><circle cx="65.5" cy="44.5" r="1.5" fill="#fff"/><ellipse cx="26" cy="56" rx="6" ry="3.5" fill="#FF6B9D" opacity="0.3"/><ellipse cx="74" cy="56" rx="6" ry="3.5" fill="#FF6B9D" opacity="0.3"/><path d="M36 62 Q50 74 64 62" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
                 <div class="stat-info">
                     <div class="stat-value" id="stat-streak">0</div>
                     <div class="stat-label">day streak</div>
                 </div>
             </div>
             <div class="stat-pill">
-                <svg class="stat-blob" viewBox="0 0 100 100"><path d="M50 10 C70 5, 92 20, 90 45 C88 68, 72 92, 50 90 C28 88, 8 70, 10 48 C12 24, 30 15, 50 10Z" fill="#A8DAFF"/><circle cx="38" cy="48" r="4" fill="#1A1A2E"/><circle cx="62" cy="48" r="4" fill="#1A1A2E"/><path d="M38 62 Q50 72 62 62" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+                <svg class="stat-blob" viewBox="0 0 100 100"><path d="M50 8 C72 3, 95 18, 92 44 C89 70, 74 94, 50 92 C26 90, 6 72, 8 48 C10 22, 28 13, 50 8Z" fill="#A8DAFF"/><circle cx="36" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="64" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="37.5" cy="44.5" r="1.5" fill="#fff"/><circle cx="65.5" cy="44.5" r="1.5" fill="#fff"/><ellipse cx="26" cy="56" rx="6" ry="3.5" fill="#FF6B9D" opacity="0.25"/><ellipse cx="74" cy="56" rx="6" ry="3.5" fill="#FF6B9D" opacity="0.25"/><path d="M36 64 L64 64" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
                 <div class="stat-info">
                     <div class="stat-value" id="stat-week">0</div>
                     <div class="stat-label">entries this week</div>
                 </div>
             </div>
             <div class="stat-pill">
-                <svg class="stat-blob" viewBox="0 0 100 100"><path d="M50 10 C70 5, 92 20, 90 45 C88 68, 72 92, 50 90 C28 88, 8 70, 10 48 C12 24, 30 15, 50 10Z" fill="#FF6B9D"/><circle cx="38" cy="48" r="4" fill="#1A1A2E"/><circle cx="62" cy="48" r="4" fill="#1A1A2E"/><path d="M36 60 Q50 76 64 60" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+                <svg class="stat-blob" viewBox="0 0 100 100"><path d="M50 8 C72 3, 95 18, 92 44 C89 70, 74 94, 50 92 C26 90, 6 72, 8 48 C10 22, 28 13, 50 8Z" fill="#FF6B9D"/><circle cx="36" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="64" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="37.5" cy="44.5" r="1.5" fill="#fff"/><circle cx="65.5" cy="44.5" r="1.5" fill="#fff"/><ellipse cx="26" cy="56" rx="6" ry="3.5" fill="#fff" opacity="0.35"/><ellipse cx="74" cy="56" rx="6" ry="3.5" fill="#fff" opacity="0.35"/><path d="M34 60 Q50 78 66 60" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
                 <div class="stat-info">
                     <div class="stat-value" id="stat-avg">—</div>
                     <div class="stat-label">avg mood</div>
