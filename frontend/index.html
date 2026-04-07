@@ -188,7 +188,7 @@
             font-family: var(--font-display);
             font-weight: 800;
             font-size: clamp(18px, 2.5vw, 24px);
-            color: var(--color-primary);
+            color: #4CAF50;
             letter-spacing: -0.01em;
             margin-bottom: 8px;
         }
@@ -498,31 +498,14 @@
            ============================================================ */
         .breathe-btn {
             position: fixed; bottom: 24px; right: 24px; z-index: 90;
-            width: 80px; height: 56px;
-            background: var(--color-primary);
-            border: none;
-            cursor: pointer;
-            border-radius: 28px;
+            font-family: var(--font-body); font-size: 14px; font-weight: 700;
+            color: #fff; background: var(--color-primary);
+            padding: 12px 24px; border-radius: var(--radius-pill);
+            border: none; cursor: pointer;
             box-shadow: 0 4px 16px rgba(67, 97, 238, 0.3);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
-            padding: 0;
         }
-        .breathe-btn::before,
-        .breathe-btn::after {
-            content: '';
-            position: absolute;
-            background: var(--color-primary);
-            border-radius: 50%;
-        }
-        .breathe-btn::before {
-            width: 36px; height: 36px;
-            top: -18px; left: 12px;
-        }
-        .breathe-btn::after {
-            width: 28px; height: 28px;
-            top: -10px; left: 40px;
-        }
-        .breathe-btn:hover { transform: scale(1.08); box-shadow: 0 8px 24px rgba(67, 97, 238, 0.4); }
+        .breathe-btn:hover { transform: scale(1.04); box-shadow: 0 6px 24px rgba(67, 97, 238, 0.4); }
 
         .breathe-overlay {
             position: fixed; inset: 0; z-index: 1000;
@@ -626,16 +609,20 @@
             .nav-links {
                 display: none;
                 position: fixed;
-                inset: 0;
-                background: rgba(253, 250, 245, 0.97);
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(253, 250, 245, 0.98);
                 backdrop-filter: blur(20px);
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                gap: 28px;
+                gap: 36px;
                 z-index: 99;
             }
             .nav-links.open { display: flex; }
+            .nav-links a {
+                font-size: 20px;
+                padding: 8px 0;
+            }
             .nav-toggle { display: flex; z-index: 101; }
             .section { padding: 64px 24px; }
             .journal-section, .entries-section { padding-left: 24px; padding-right: 24px; }
