@@ -177,11 +177,11 @@
         }
         .journal-header { text-align: center; margin-bottom: 48px; }
         .journal-header .section-label {
-            font-family: var(--font-display);
-            font-weight: 800;
-            font-size: clamp(28px, 3.5vw, 42px);
-            color: var(--color-text);
-            letter-spacing: -0.02em;
+            font-family: var(--font-body);
+            font-weight: 400;
+            font-size: 16px;
+            color: var(--color-muted);
+            letter-spacing: 0.04em;
             margin-bottom: 8px;
         }
         .journal-header .section-title {
@@ -814,46 +814,35 @@
         const blobDisplay = document.getElementById('mood-blob-display');
 
         // Each mood has: color, label, shape path, mouth path
-        // Color order: grey → blue → yellow → lime → pink
         const moodBlobs = {
-            1: { color: '#E8E4F0', label: 'very low',
-                // Raindrop / puddle
+            1: { color: '#A8DAFF', label: 'very low',
                 shape: 'M50 15 Q50 15 65 45 Q75 65 65 80 Q55 92 50 92 Q45 92 35 80 Q25 65 35 45 Q50 15 50 15Z',
                 mouth: 'M38 64 Q50 54 62 64' },
-            2: { color: '#E8E4F0', label: 'low',
-                // Cloud
+            2: { color: '#A8DAFF', label: 'low',
                 shape: 'M25 72 Q20 72 20 64 Q20 56 28 54 Q28 42 40 38 Q44 28 56 28 Q68 28 72 38 Q84 42 84 54 Q92 56 92 64 Q92 72 87 72Z',
                 mouth: 'M40 62 Q50 54 60 62' },
-            3: { color: '#A8DAFF', label: 'struggling',
-                // Lightning bolt
+            3: { color: '#FFD166', label: 'struggling',
                 shape: 'M55 12 L35 52 L50 52 L42 88 L72 44 L56 44Z',
                 mouth: 'M42 60 L58 60' },
-            4: { color: '#A8DAFF', label: 'uneasy',
-                // Crescent moon
+            4: { color: '#FFD166', label: 'uneasy',
                 shape: 'M55 12 Q80 12 85 38 Q90 64 70 82 Q50 95 35 78 Q20 62 25 38 Q30 18 55 12Z',
                 mouth: 'M42 58 L56 58' },
-            5: { color: '#FFD166', label: 'okay',
-                // Classic round blob
+            5: { color: '#E8E4F0', label: 'okay',
                 shape: 'M50 12 C70 8, 90 22, 88 46 C86 68, 70 88, 50 88 C30 88, 12 68, 14 46 C16 22, 30 16, 50 12Z',
                 mouth: 'M38 60 L62 60' },
-            6: { color: '#FFD166', label: 'alright',
-                // Soft square / cushion
+            6: { color: '#E8E4F0', label: 'alright',
                 shape: 'M22 22 Q22 12 32 12 L68 12 Q78 12 78 22 L78 68 Q78 78 68 78 L32 78 Q22 78 22 68Z',
                 mouth: 'M40 58 Q50 64 60 58' },
             7: { color: '#C8F542', label: 'good',
-                // Sun with rays
                 shape: 'M50 22 C62 22 72 32 72 44 C72 56 62 66 50 66 C38 66 28 56 28 44 C28 32 38 22 50 22Z M50 10 L50 16 M50 72 L50 78 M16 44 L22 44 M78 44 L84 44 M26 20 L30 24 M70 64 L74 68 M26 68 L30 64 M70 20 L74 24',
                 mouth: 'M38 56 Q50 66 62 56' },
             8: { color: '#C8F542', label: 'great',
-                // Star
                 shape: 'M50 10 L58 38 L88 38 L64 54 L72 82 L50 66 L28 82 L36 54 L12 38 L42 38Z',
                 mouth: 'M36 54 Q50 66 64 54' },
             9: { color: '#FF6B9D', label: 'amazing',
-                // Heart
                 shape: 'M50 82 Q20 62 18 40 Q16 22 32 16 Q42 12 50 24 Q58 12 68 16 Q84 22 82 40 Q80 62 50 82Z',
                 mouth: 'M36 52 Q50 66 64 52' },
             10: { color: '#FF6B9D', label: 'wonderful',
-                // Big heart with wider shape
                 shape: 'M50 88 Q14 66 12 38 Q10 16 30 10 Q42 6 50 20 Q58 6 70 10 Q90 16 88 38 Q86 66 50 88Z',
                 mouth: 'M34 50 Q50 68 66 50' },
         };
