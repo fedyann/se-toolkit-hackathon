@@ -803,6 +803,58 @@
         }
 
         /* ============================================================
+           Breath Bubble
+           ============================================================ */
+        .breathe-btn {
+            position: fixed; bottom: 24px; right: 24px; z-index: 90;
+            font-family: var(--font-body); font-size: 14px; font-weight: 700;
+            color: #fff; background: var(--color-primary);
+            padding: 12px 24px; border-radius: var(--radius-pill);
+            border: none; cursor: pointer;
+            box-shadow: 0 4px 16px rgba(67, 97, 238, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .breathe-btn:hover { transform: scale(1.04); box-shadow: 0 6px 24px rgba(67, 97, 238, 0.4); }
+
+        .breathe-overlay {
+            position: fixed; inset: 0; z-index: 1000;
+            background: rgba(253, 250, 245, 0.95);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            display: none; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+        .breathe-overlay.active { display: flex; }
+
+        .breathe-blob {
+            width: 120px; height: 120px;
+            transition: transform 4s ease-in-out, fill 4s ease;
+        }
+        .breathe-blob.inhale { transform: scale(1.6); fill: var(--color-primary); }
+        .breathe-blob.hold-in { transform: scale(1.6); fill: var(--color-secondary); }
+        .breathe-blob.exhale { transform: scale(1.0); fill: var(--color-pink); }
+        .breathe-blob.hold-out { transform: scale(1.0); fill: var(--color-sky); }
+
+        .breathe-label {
+            font-family: var(--font-display); font-weight: 800;
+            font-size: clamp(28px, 4vw, 42px);
+            color: var(--color-text); margin-bottom: 32px;
+            transition: color 0.5s ease;
+        }
+        .breathe-counter {
+            font-family: var(--font-mono); font-size: 14px;
+            color: var(--color-muted); margin-top: 24px;
+        }
+        .breathe-done {
+            font-family: var(--font-body); font-size: 16px; font-weight: 700;
+            color: var(--color-primary); background: none;
+            border: 2px solid var(--color-primary);
+            padding: 12px 32px; border-radius: var(--radius-pill);
+            cursor: pointer; margin-top: 32px;
+            transition: all 0.2s ease;
+        }
+        .breathe-done:hover { background: var(--color-primary); color: #fff; }
+
+        /* ============================================================
            Footer
            ============================================================ */
         .footer {
@@ -1126,12 +1178,30 @@
         <div class="footer-links">
             <a href="#journal">Journal</a>
             <a href="dashboard.html">Dashboard</a>
+            <a href="galaxy.html">Galaxy</a>
+            <a href="capsule.html">Capsule</a>
             <a href="https://github.com/fedyann/se-toolkit-hackathon" target="_blank">GitHub</a>
         </div>
         <div class="footer-bottom">
             &copy; 2026 Blobbi. Not a replacement for professional therapy.
         </div>
     </footer>
+
+    <!-- Breath Bubble button -->
+    <button class="breathe-btn" id="breatheBtn" onclick="openBreathe()">˚ breathe</button>
+
+    <!-- Breath overlay -->
+    <div class="breathe-overlay" id="breatheOverlay">
+        <div class="breathe-label" id="breatheLabel">inhale…</div>
+        <svg class="breathe-blob" id="breatheBlob" viewBox="0 0 100 100">
+            <path d="M50 8 C72 3, 95 18, 92 44 C89 70, 74 94, 50 92 C26 90, 6 72, 8 48 C10 22, 28 13, 50 8Z" fill="#4361EE"/>
+            <circle cx="36" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="64" cy="46" r="4.5" fill="#1A1A2E"/>
+            <circle cx="37.5" cy="44.5" r="1.5" fill="#fff"/><circle cx="65.5" cy="44.5" r="1.5" fill="#fff"/>
+            <path d="M36 62 Q50 74 64 62" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+        <div class="breathe-counter" id="breatheCounter">cycle 1 of 4</div>
+        <button class="breathe-done" onclick="closeBreathe()">done</button>
+    </div>
 
     <!-- ============================================================
          JavaScript
@@ -1321,6 +1391,50 @@
         }
 
         loadEntries();
+
+        // ====== FEATURE 3: Breath Bubble ======
+        let breatheInterval = null;
+        let breatheCycle = 0;
+
+        function openBreathe() {
+            document.getElementById('breatheOverlay').classList.add('active');
+            breatheCycle = 0;
+            runBreathCycle();
+        }
+
+        function closeBreathe() {
+            document.getElementById('breatheOverlay').classList.remove('active');
+            if (breatheInterval) clearInterval(breatheInterval);
+        }
+
+        function runBreathCycle() {
+            const phases = [
+                { label: 'inhale…', cls: 'inhale' },
+                { label: 'hold…', cls: 'hold-in' },
+                { label: 'exhale…', cls: 'exhale' },
+                { label: 'hold…', cls: 'hold-out' },
+            ];
+            let phase = 0;
+
+            function tick() {
+                if (breatheCycle >= 4) {
+                    document.getElementById('breatheLabel').textContent = 'well done ✦';
+                    document.getElementById('breatheCounter').textContent = 'complete';
+                    return;
+                }
+                const p = phases[phase];
+                const blob = document.getElementById('breatheBlob');
+                blob.className = 'breathe-blob ' + p.cls;
+                document.getElementById('breatheLabel').textContent = p.label;
+                document.getElementById('breatheCounter').textContent = `cycle ${breatheCycle + 1} of 4`;
+                phase++;
+                if (phase >= 4) { phase = 0; breatheCycle++; }
+            }
+
+            tick();
+            if (breatheInterval) clearInterval(breatheInterval);
+            breatheInterval = setInterval(tick, 4000);
+        }
     </script>
 </body>
 </html>

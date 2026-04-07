@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blobbi — Your Galaxy ˚✧</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Syne:wght@700;800&family=Space+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg: #FDFAF5; --color-surface: #FFFFFF; --color-primary: #4361EE;
+            --color-secondary: #C8F542; --color-pink: #FF6B9D; --color-yellow: #FFD166;
+            --color-sky: #A8DAFF; --color-text: #1A1A2E; --color-muted: #6B7A99;
+            --color-border: #E8E4F0; --font-display: 'Syne', sans-serif;
+            --font-body: 'Nunito', sans-serif; --font-mono: 'Space Mono', monospace;
+            --radius-card: 20px; --radius-pill: 100px;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font-body); color: var(--color-text); line-height: 1.7; overflow-x: hidden; }
+
+        /* Navbar */
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 18px 48px;
+            background: rgba(26, 26, 46, 0.9); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+        }
+        .navbar-brand {
+            display: flex; align-items: center; gap: 10px;
+            font-family: var(--font-display); font-weight: 800; font-size: 26px;
+            color: #fff; text-decoration: none;
+        }
+        .navbar-brand .blob-icon { width: 32px; height: 32px; }
+        .nav-links { display: flex; align-items: center; gap: 32px; }
+        .nav-links a {
+            font-family: var(--font-body); font-size: 15px; font-weight: 600;
+            color: rgba(255,255,255,0.6); text-decoration: none; position: relative; transition: color 0.25s ease;
+        }
+        .nav-links a:hover, .nav-links a.active { color: #fff; }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0;
+            width: 0; height: 2.5px; background: var(--color-secondary);
+            border-radius: 2px; transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+        .nav-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+        .nav-toggle span { display: block; width: 24px; height: 2.5px; background: #fff; border-radius: 2px; }
+
+        /* Galaxy canvas */
+        .galaxy-page {
+            min-height: 100vh;
+            background: #1A1A2E;
+            padding: 100px 48px 60px;
+        }
+        .galaxy-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .galaxy-title {
+            font-family: var(--font-display); font-weight: 800;
+            font-size: clamp(28px, 3.5vw, 44px);
+            color: #fff; margin-bottom: 8px;
+        }
+        .galaxy-subtitle {
+            font-size: 16px; color: rgba(255,255,255,0.5);
+        }
+
+        /* Time filter */
+        .time-filter {
+            display: flex; justify-content: center; gap: 12px; margin-bottom: 32px;
+        }
+        .time-pill {
+            font-family: var(--font-mono); font-size: 12px;
+            padding: 8px 20px; border-radius: var(--radius-pill);
+            border: 1.5px solid rgba(255,255,255,0.15);
+            background: transparent; color: rgba(255,255,255,0.5);
+            cursor: pointer; transition: all 0.2s ease;
+        }
+        .time-pill:hover { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.8); }
+        .time-pill.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+
+        /* Galaxy canvas area */
+        .galaxy-canvas {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            height: 500px;
+            margin: 0 auto 40px;
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            background: radial-gradient(ellipse at 30% 40%, rgba(67, 97, 238, 0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 60%, rgba(255, 107, 157, 0.06) 0%, transparent 50%),
+                        #1A1A2E;
+        }
+
+        /* Constellation lines */
+        .constellation-line {
+            position: absolute;
+            height: 1px;
+            background: rgba(255,255,255,0.15);
+            border-top: 1px dashed rgba(255,255,255,0.15);
+            transform-origin: left center;
+        }
+
+        /* Stars */
+        .galaxy-star {
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: twinkle var(--twinkle-duration, 3s) ease-in-out infinite;
+            animation-delay: var(--twinkle-delay, 0s);
+        }
+        .galaxy-star:hover {
+            transform: scale(1.8);
+            box-shadow: 0 0 12px currentColor;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        /* Tooltip */
+        .star-tooltip {
+            position: absolute;
+            z-index: 10;
+            background: var(--color-surface);
+            border-radius: 12px;
+            padding: 14px 18px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            max-width: 240px;
+            display: none;
+            pointer-events: none;
+        }
+        .star-tooltip.visible { display: block; }
+        .tooltip-date { font-family: var(--font-mono); font-size: 11px; color: var(--color-muted); margin-bottom: 4px; }
+        .tooltip-mood { font-size: 13px; font-weight: 700; color: var(--color-primary); margin-bottom: 4px; }
+        .tooltip-thought { font-size: 13px; color: var(--color-text); line-height: 1.5; }
+
+        /* Legend */
+        .galaxy-legend {
+            display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;
+            padding: 20px 0;
+        }
+        .legend-item {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 13px; color: rgba(255,255,255,0.6);
+        }
+        .legend-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+        }
+
+        /* Back link */
+        .back-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-family: var(--font-mono); font-size: 13px;
+            color: rgba(255,255,255,0.5); text-decoration: none;
+            margin-bottom: 32px; transition: color 0.2s ease;
+        }
+        .back-link:hover { color: #fff; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar { padding: 14px 24px; }
+            .nav-links {
+                display: none; position: fixed; inset: 0;
+                background: rgba(26, 26, 46, 0.97); backdrop-filter: blur(20px);
+                flex-direction: column; align-items: center; justify-content: center; gap: 28px; z-index: 99;
+            }
+            .nav-links.open { display: flex; }
+            .nav-toggle { display: flex; z-index: 101; }
+            .galaxy-page { padding: 90px 24px 40px; }
+            .galaxy-canvas { height: 350px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <svg class="blob-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 8 C72 3, 95 18, 92 44 C89 70, 74 94, 50 92 C26 90, 6 72, 8 48 C10 22, 28 13, 50 8Z" fill="#4361EE"/>
+                <circle cx="36" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="64" cy="46" r="4.5" fill="#1A1A2E"/>
+                <circle cx="37.5" cy="44.5" r="1.5" fill="#fff"/><circle cx="65.5" cy="44.5" r="1.5" fill="#fff"/>
+                <ellipse cx="26" cy="56" rx="6" ry="3.5" fill="#FF6B9D" opacity="0.35"/><ellipse cx="74" cy="56" rx="6" ry="3.5" fill="#FF6B9D" opacity="0.35"/>
+                <path d="M36 62 Q50 74 64 62" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/>
+            </svg>
+            Blobbi
+        </a>
+        <div class="nav-links" id="navLinks">
+            <a href="/">Journal</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="galaxy.html" class="active">Galaxy</a>
+            <a href="capsule.html">Capsule</a>
+        </div>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </nav>
+
+    <main class="galaxy-page">
+        <a href="dashboard.html" class="back-link">← back to dashboard</a>
+
+        <div class="galaxy-header">
+            <h1 class="galaxy-title">your feeling galaxy ✦</h1>
+            <p class="galaxy-subtitle">every star is a moment you chose to show up</p>
+        </div>
+
+        <div class="time-filter">
+            <button class="time-pill active" data-range="week" onclick="setRange('week', this)">this week</button>
+            <button class="time-pill" data-range="month" onclick="setRange('month', this)">this month</button>
+            <button class="time-pill" data-range="all" onclick="setRange('all', this)">all time</button>
+        </div>
+
+        <div class="galaxy-canvas" id="galaxy-canvas">
+            <!-- Stars injected by JS -->
+        </div>
+
+        <div class="galaxy-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#FFD166"></div>happy</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#A8DAFF"></div>calm</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#E8E4F0"></div>neutral</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#9B72CF"></div>sad</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#FF6B9D"></div>anxious</div>
+        </div>
+    </main>
+
+    <script>
+        // Navbar
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.getElementById('navLinks');
+        navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+        navLinks.querySelectorAll('a').forEach(l => l.addEventListener('click', () => navLinks.classList.remove('open')));
+
+        let currentRange = 'week';
+        let allEntries = [];
+
+        async function loadGalaxy() {
+            try {
+                const res = await fetch('/api/entries');
+                if (!res.ok) throw new Error();
+                allEntries = await res.json();
+                renderGalaxy();
+            } catch (e) {
+                document.getElementById('galaxy-canvas').innerHTML = '<div style="text-align:center;padding:60px;color:rgba(255,255,255,0.5);">Failed to load entries.</div>';
+            }
+        }
+
+        function setRange(range, el) {
+            currentRange = range;
+            document.querySelectorAll('.time-pill').forEach(p => p.classList.remove('active'));
+            el.classList.add('active');
+            renderGalaxy();
+        }
+
+        function filterEntries(entries, range) {
+            const now = new Date();
+            if (range === 'week') {
+                const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate() - 7);
+                return entries.filter(e => new Date(e.created_at) >= weekAgo);
+            } else if (range === 'month') {
+                const monthAgo = new Date(now); monthAgo.setMonth(monthAgo.getMonth() - 1);
+                return entries.filter(e => new Date(e.created_at) >= monthAgo);
+            }
+            return entries;
+        }
+
+        function getMoodColor(mood) {
+            if (mood >= 8) return '#FFD166';
+            if (mood >= 6) return '#A8DAFF';
+            if (mood >= 4) return '#E8E4F0';
+            if (mood >= 2) return '#9B72CF';
+            return '#FF6B9D';
+        }
+
+        function getMoodLabel(mood) {
+            if (mood >= 8) return 'happy';
+            if (mood >= 6) return 'calm';
+            if (mood >= 4) return 'neutral';
+            if (mood >= 2) return 'sad';
+            return 'anxious';
+        }
+
+        // Seeded random for consistent positioning
+        function seededRandom(seed) {
+            let s = seed;
+            return function() {
+                s = (s * 9301 + 49297) % 233280;
+                return s / 233280;
+            };
+        }
+
+        function renderGalaxy() {
+            const canvas = document.getElementById('galaxy-canvas');
+            const filtered = filterEntries(allEntries, currentRange);
+
+            if (filtered.length === 0) {
+                canvas.innerHTML = '<div style="text-align:center;padding:80px;color:rgba(255,255,255,0.4);font-size:16px;">No stars yet. Start journaling to fill your galaxy ✦</div>';
+                return;
+            }
+
+            const w = canvas.offsetWidth;
+            const h = canvas.offsetHeight;
+            const padding = 40;
+
+            // Generate positions using entry id as seed
+            const positions = filtered.map((entry, i) => {
+                const rng = seededRandom(entry.id * 137 + i * 31);
+                return {
+                    x: padding + rng() * (w - padding * 2),
+                    y: padding + rng() * (h - padding * 2),
+                    entry
+                };
+            });
+
+            let html = '';
+
+            // Constellation lines (connect entries from same week)
+            const weekGroups = {};
+            positions.forEach((p, i) => {
+                const d = new Date(p.entry.created_at);
+                const weekKey = d.getFullYear() + '-W' + Math.ceil(d.getDate() / 7);
+                if (!weekGroups[weekKey]) weekGroups[weekKey] = [];
+                weekGroups[weekKey].push(i);
+            });
+
+            for (const key in weekGroups) {
+                const group = weekGroups[key];
+                for (let i = 0; i < group.length - 1; i++) {
+                    const a = positions[group[i]];
+                    const b = positions[group[i + 1]];
+                    const dx = b.x - a.x;
+                    const dy = b.y - a.y;
+                    const length = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                    html += `<div class="constellation-line" style="left:${a.x}px;top:${a.y}px;width:${length}px;transform:rotate(${angle}deg)"></div>`;
+                }
+            }
+
+            // Stars
+            positions.forEach((p, i) => {
+                const color = getMoodColor(p.entry.mood);
+                const size = Math.max(2, Math.min(6, p.entry.mood * 0.6));
+                const twinkleDuration = (2 + Math.random() * 3).toFixed(1);
+                const twinkleDelay = (Math.random() * 3).toFixed(1);
+                html += `<div class="galaxy-star" data-index="${i}" style="left:${p.x - size/2}px;top:${p.y - size/2}px;width:${size}px;height:${size}px;background:${color};color:${color};--twinkle-duration:${twinkleDuration}s;--twinkle-delay:${twinkleDelay}s"></div>`;
+            });
+
+            // Tooltip
+            html += '<div class="star-tooltip" id="star-tooltip"><div class="tooltip-date" id="tooltip-date"></div><div class="tooltip-mood" id="tooltip-mood"></div><div class="tooltip-thought" id="tooltip-thought"></div></div>';
+
+            canvas.innerHTML = html;
+
+            // Hover events
+            canvas.querySelectorAll('.galaxy-star').forEach(star => {
+                star.addEventListener('mouseenter', (e) => {
+                    const idx = parseInt(star.dataset.index);
+                    const entry = positions[idx].entry;
+                    const tooltip = document.getElementById('star-tooltip');
+                    document.getElementById('tooltip-date').textContent = new Date(entry.created_at).toLocaleDateString();
+                    document.getElementById('tooltip-mood').textContent = `mood: ${entry.mood}/10 — ${getMoodLabel(entry.mood)}`;
+                    document.getElementById('tooltip-thought').textContent = entry.thought.substring(0, 60) + (entry.thought.length > 60 ? '…' : '');
+                    tooltip.style.left = Math.min(positions[idx].x + 16, w - 260) + 'px';
+                    tooltip.style.top = (positions[idx].y - 80) + 'px';
+                    tooltip.classList.add('visible');
+                });
+                star.addEventListener('mouseleave', () => {
+                    document.getElementById('star-tooltip').classList.remove('visible');
+                });
+            });
+        }
+
+        loadGalaxy();
+    </script>
+</body>
+</html>
