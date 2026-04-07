@@ -176,6 +176,22 @@
             margin: 0 auto;
         }
         .journal-header { text-align: center; margin-bottom: 48px; }
+        .journal-header .section-label {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: clamp(28px, 3.5vw, 42px);
+            color: var(--color-text);
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+        .journal-header .section-title {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: clamp(28px, 3.5vw, 42px);
+            color: var(--color-text);
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
         .journal-header .section-desc { margin: 0 auto; }
 
         .journal-card {
@@ -482,14 +498,27 @@
            ============================================================ */
         .breathe-btn {
             position: fixed; bottom: 24px; right: 24px; z-index: 90;
-            font-family: var(--font-body); font-size: 14px; font-weight: 700;
-            color: #fff; background: var(--color-primary);
-            padding: 12px 24px; border-radius: var(--radius-pill);
-            border: none; cursor: pointer;
-            box-shadow: 0 4px 16px rgba(67, 97, 238, 0.3);
+            font-family: var(--font-body); font-size: 16px; font-weight: 700;
+            color: #fff;
+            background: var(--color-primary);
+            padding: 18px 32px;
+            border: none;
+            cursor: pointer;
+            border-radius: 60px 60px 60px 60px / 40px 40px 60px 60px;
+            box-shadow: 0 4px 16px rgba(67, 97, 238, 0.3),
+                        inset 0 -4px 0 rgba(0,0,0,0.1);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .breathe-btn:hover { transform: scale(1.04); box-shadow: 0 6px 24px rgba(67, 97, 238, 0.4); }
+        .breathe-btn::before {
+            content: '';
+            position: absolute;
+            top: -10px; left: 16px;
+            width: 28px; height: 28px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            box-shadow: 20px -6px 0 4px var(--color-primary);
+        }
+        .breathe-btn:hover { transform: scale(1.06); box-shadow: 0 8px 24px rgba(67, 97, 238, 0.4), inset 0 -4px 0 rgba(0,0,0,0.1); }
 
         .breathe-overlay {
             position: fixed; inset: 0; z-index: 1000;
