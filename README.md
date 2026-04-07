@@ -1,11 +1,15 @@
-# MindLog — CBT Thought Journal
+# Blobbi — CBT Thought Journal
 
 > A web app that helps users identify cognitive distortions in their negative thoughts and reframe them with AI assistance.
 
 ## Screenshots
 
-> *[Placeholder: screenshot of the journal entry page]*
-> *[Placeholder: screenshot of the dashboard with charts]*
+<img width="3145" height="1733" alt="image" src="https://github.com/user-attachments/assets/bd88cbca-159e-44e1-8ce6-2990e1b04330" />
+
+<img width="3154" height="1553" alt="image" src="https://github.com/user-attachments/assets/4da82e21-afe2-4b4a-ac1c-cde45dcf8183" />
+
+<img width="3135" height="1649" alt="image" src="https://github.com/user-attachments/assets/3dceae44-2882-4daf-ae18-75ff443fe33c" />
+
 
 ## End Users
 
@@ -23,7 +27,7 @@ quick in-the-moment reframing.
 
 ## Solution
 
-MindLog lets users log a mood and a negative thought in seconds. An AI (Qwen
+Blobbi lets users log a mood and a negative thought in seconds. An AI (Qwen
 LLM) instantly identifies the cognitive distortion and offers a gentle,
 compassionate reframe. Over time, the dashboard reveals emotional patterns
 and distortion trends, helping users become more aware of their thinking
