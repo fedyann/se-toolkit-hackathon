@@ -543,17 +543,6 @@
         /* ============================================================
            Breath Bubble
            ============================================================ */
-        .breathe-btn {
-            position: fixed; bottom: 24px; right: 24px; z-index: 90;
-            font-family: var(--font-body); font-size: 14px; font-weight: 700;
-            color: #fff; background: var(--color-primary);
-            padding: 12px 24px; border-radius: var(--radius-pill);
-            border: none; cursor: pointer;
-            box-shadow: 0 4px 16px rgba(67, 97, 238, 0.3);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .breathe-btn:hover { transform: scale(1.04); box-shadow: 0 6px 24px rgba(67, 97, 238, 0.4); }
-
         .breathe-overlay {
             position: fixed; inset: 0; z-index: 1000;
             background: rgba(253, 250, 245, 0.95);
@@ -755,8 +744,6 @@
         <div class="nav-links" id="navLinks">
             <a href="/" class="active">Journal</a>
             <a href="dashboard.html">Dashboard</a>
-            <a href="galaxy.html">Galaxy</a>
-            <a href="capsule.html">Capsule</a>
             <button class="breathe-nav-btn" onclick="openBreathe()">Breathe</button>
         </div>
         <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
@@ -769,8 +756,6 @@
         <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">✕</button>
         <a href="/" class="active">Journal</a>
         <a href="dashboard.html">Dashboard</a>
-        <a href="galaxy.html">Galaxy</a>
-        <a href="capsule.html">Capsule</a>
         <button class="breathe-nav-btn" onclick="openBreathe(); closeMobileMenu();">Breathe</button>
     </div>
 
@@ -860,9 +845,6 @@
             &copy; 2026 Blobbi. Not a replacement for professional therapy.
         </div>
     </footer>
-
-    <!-- Breath Bubble button -->
-    <button class="breathe-btn" id="breatheBtn" onclick="openBreathe()">˚ breathe</button>
 
     <!-- Breath overlay -->
     <div class="breathe-overlay" id="breatheOverlay">
@@ -1090,9 +1072,9 @@
 
         const phases = [
             { label: 'Inhale',  duration: 4000, scale: 1.3, color: '#4361EE', glowSize: 32, glowColor: '#4361EE66' },
-            { label: 'Hold',    duration: 2000, scale: 1.3, color: '#C8F542', glowSize: 32, glowColor: '#C8F54266' },
-            { label: 'Exhale',  duration: 6000, scale: 1.0, color: '#A8DAFF', glowSize: 8,  glowColor: '#A8DAFF33' },
-            { label: 'Rest',    duration: 1000, scale: 1.0, color: '#A8DAFF', glowSize: 8,  glowColor: '#A8DAFF33' },
+            { label: 'Hold',    duration: 3000, scale: 1.3, color: '#C8F542', glowSize: 32, glowColor: '#C8F54266' },
+            { label: 'Exhale',  duration: 4000, scale: 1.0, color: '#A8DAFF', glowSize: 8,  glowColor: '#A8DAFF33' },
+            { label: 'Hold',    duration: 3000, scale: 1.0, color: '#E8E4F0', glowSize: 8,  glowColor: '#E8E4F033' },
         ];
 
         function openBreathe() {
