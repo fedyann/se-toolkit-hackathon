@@ -179,17 +179,17 @@
         .journal-header .section-label {
             font-family: var(--font-display);
             font-weight: 800;
-            font-size: clamp(32px, 4vw, 48px);
+            font-size: clamp(28px, 3.5vw, 42px);
             color: var(--color-text);
             letter-spacing: -0.02em;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
         }
         .journal-header .section-title {
             font-family: var(--font-display);
             font-weight: 800;
-            font-size: clamp(18px, 2.5vw, 24px);
-            color: #4CAF50;
-            letter-spacing: -0.01em;
+            font-size: clamp(28px, 3.5vw, 42px);
+            color: var(--color-text);
+            letter-spacing: -0.02em;
             margin-bottom: 8px;
         }
         .journal-header .section-desc { margin: 0 auto; }
@@ -814,29 +814,29 @@
         const blobDisplay = document.getElementById('mood-blob-display');
 
         // Each mood has: color, label, shape path, mouth path
-        // Each shape is unique and centered so the face sits in the middle
+        // Color order: grey → blue → yellow → lime → pink
         const moodBlobs = {
-            1: { color: '#A8DAFF', label: 'very low',
+            1: { color: '#E8E4F0', label: 'very low',
                 // Raindrop / puddle
                 shape: 'M50 15 Q50 15 65 45 Q75 65 65 80 Q55 92 50 92 Q45 92 35 80 Q25 65 35 45 Q50 15 50 15Z',
                 mouth: 'M38 64 Q50 54 62 64' },
-            2: { color: '#A8DAFF', label: 'low',
+            2: { color: '#E8E4F0', label: 'low',
                 // Cloud
                 shape: 'M25 72 Q20 72 20 64 Q20 56 28 54 Q28 42 40 38 Q44 28 56 28 Q68 28 72 38 Q84 42 84 54 Q92 56 92 64 Q92 72 87 72Z',
                 mouth: 'M40 62 Q50 54 60 62' },
-            3: { color: '#FFD166', label: 'struggling',
+            3: { color: '#A8DAFF', label: 'struggling',
                 // Lightning bolt
                 shape: 'M55 12 L35 52 L50 52 L42 88 L72 44 L56 44Z',
                 mouth: 'M42 60 L58 60' },
-            4: { color: '#FFD166', label: 'uneasy',
+            4: { color: '#A8DAFF', label: 'uneasy',
                 // Crescent moon
                 shape: 'M55 12 Q80 12 85 38 Q90 64 70 82 Q50 95 35 78 Q20 62 25 38 Q30 18 55 12Z',
                 mouth: 'M42 58 L56 58' },
-            5: { color: '#E8E4F0', label: 'okay',
+            5: { color: '#FFD166', label: 'okay',
                 // Classic round blob
                 shape: 'M50 12 C70 8, 90 22, 88 46 C86 68, 70 88, 50 88 C30 88, 12 68, 14 46 C16 22, 30 16, 50 12Z',
                 mouth: 'M38 60 L62 60' },
-            6: { color: '#E8E4F0', label: 'alright',
+            6: { color: '#FFD166', label: 'alright',
                 // Soft square / cushion
                 shape: 'M22 22 Q22 12 32 12 L68 12 Q78 12 78 22 L78 68 Q78 78 68 78 L32 78 Q22 78 22 68Z',
                 mouth: 'M40 58 Q50 64 60 58' },
