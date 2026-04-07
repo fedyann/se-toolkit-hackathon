@@ -3,45 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindLog — A Space for Growth</title>
+    <title>Blobbi — your feelings, sorted ˚✧</title>
 
-    <!-- Google Fonts -->
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Space+Mono:wght@400;700&display=swap');
+    <!-- Google Fonts via <link> -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Syne:wght@700;800&family=Space+Mono&display=swap" rel="stylesheet">
 
     <style>
         /* ============================================================
-           MindLog — Calm Luxury Redesign
+           Blobbi — Design System
            ============================================================ */
 
-        /* --- CSS Custom Properties --- */
         :root {
-            --color-bg: #0F1A14;
-            --color-surface: #1C2B20;
-            --color-primary: #4A8C6F;
-            --color-accent: #C9A84C;
-            --color-text: #EAE6DC;
-            --color-muted: #7A9485;
-            --color-border: #2E4035;
+            --color-bg: #FDFAF5;
+            --color-surface: #FFFFFF;
+            --color-primary: #4361EE;
+            --color-secondary: #C8F542;
+            --color-pink: #FF6B9D;
+            --color-yellow: #FFD166;
+            --color-sky: #A8DAFF;
+            --color-text: #1A1A2E;
+            --color-muted: #6B7A99;
+            --color-border: #E8E4F0;
 
-            --font-display: 'Cormorant Garamond', Georgia, serif;
-            --font-body: 'DM Sans', -apple-system, sans-serif;
+            --font-display: 'Syne', sans-serif;
+            --font-body: 'Nunito', sans-serif;
             --font-mono: 'Space Mono', monospace;
 
-            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --radius-card: 20px;
+            --radius-pill: 100px;
+            --shadow-card: 0 4px 24px rgba(67, 97, 238, 0.08);
+            --shadow-card-hover: 0 8px 32px rgba(67, 97, 238, 0.14);
         }
 
-        /* --- Reset --- */
         *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        html {
-            scroll-behavior: smooth;
-            font-size: 16px;
-        }
+        html { scroll-behavior: smooth; font-size: 16px; }
 
         body {
             font-family: var(--font-body);
@@ -50,166 +50,106 @@
             line-height: 1.7;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* --- Animated Background Mesh --- */
-        .bg-mesh {
+        /* Dot-grid background pattern */
+        body::before {
+            content: '';
             position: fixed;
             inset: 0;
             z-index: -1;
-            background:
-                radial-gradient(ellipse 80% 60% at 10% 20%, rgba(74, 140, 111, 0.08) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 80% at 90% 80%, rgba(201, 168, 76, 0.05) 0%, transparent 50%),
-                radial-gradient(ellipse 50% 50% at 50% 50%, rgba(46, 64, 53, 0.3) 0%, transparent 70%);
-            animation: meshShift 12s ease-in-out infinite alternate;
+            background-image: radial-gradient(circle, var(--color-border) 1.2px, transparent 1.2px);
+            background-size: 20px 20px;
         }
 
-        @keyframes meshShift {
-            0% {
-                background:
-                    radial-gradient(ellipse 80% 60% at 10% 20%, rgba(74, 140, 111, 0.08) 0%, transparent 60%),
-                    radial-gradient(ellipse 60% 80% at 90% 80%, rgba(201, 168, 76, 0.05) 0%, transparent 50%),
-                    radial-gradient(ellipse 50% 50% at 50% 50%, rgba(46, 64, 53, 0.3) 0%, transparent 70%);
-            }
-            50% {
-                background:
-                    radial-gradient(ellipse 70% 70% at 30% 60%, rgba(74, 140, 111, 0.1) 0%, transparent 55%),
-                    radial-gradient(ellipse 50% 60% at 70% 30%, rgba(201, 168, 76, 0.06) 0%, transparent 45%),
-                    radial-gradient(ellipse 60% 40% at 40% 40%, rgba(46, 64, 53, 0.35) 0%, transparent 65%);
-            }
-            100% {
-                background:
-                    radial-gradient(ellipse 60% 80% at 60% 10%, rgba(74, 140, 111, 0.07) 0%, transparent 60%),
-                    radial-gradient(ellipse 70% 50% at 20% 70%, rgba(201, 168, 76, 0.04) 0%, transparent 50%),
-                    radial-gradient(ellipse 55% 55% at 70% 60%, rgba(46, 64, 53, 0.28) 0%, transparent 70%);
-            }
-        }
-
-        /* --- Scroll Reveal Base --- */
+        /* Scroll reveal */
         .reveal {
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+            transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
         }
-
         .reveal.visible {
             opacity: 1;
             transform: translateY(0);
         }
 
-        /* --- Staggered children --- */
-        .stagger-children > * {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
-        }
-
-        .stagger-children.visible > *:nth-child(1) { transition-delay: 0.0s; opacity: 1; transform: translateY(0); }
-        .stagger-children.visible > *:nth-child(2) { transition-delay: 0.1s; opacity: 1; transform: translateY(0); }
-        .stagger-children.visible > *:nth-child(3) { transition-delay: 0.2s; opacity: 1; transform: translateY(0); }
-        .stagger-children.visible > *:nth-child(4) { transition-delay: 0.3s; opacity: 1; transform: translateY(0); }
-        .stagger-children.visible > *:nth-child(5) { transition-delay: 0.4s; opacity: 1; transform: translateY(0); }
-        .stagger-children.visible > *:nth-child(6) { transition-delay: 0.5s; opacity: 1; transform: translateY(0); }
-
         /* ============================================================
-           Navigation — Frosted Glass
+           Navbar
            ============================================================ */
         .navbar {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             z-index: 100;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 20px 48px;
-            transition: background 0.4s ease, backdrop-filter 0.4s ease, padding 0.4s ease, box-shadow 0.4s ease;
+            padding: 18px 48px;
+            background: rgba(253, 250, 245, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: box-shadow 0.3s ease;
         }
-
         .navbar.scrolled {
-            background: rgba(28, 43, 32, 0.85);
-            backdrop-filter: blur(20px) saturate(1.4);
-            -webkit-backdrop-filter: blur(20px) saturate(1.4);
-            padding: 14px 48px;
             box-shadow: 0 1px 0 var(--color-border);
         }
 
         .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-family: var(--font-display);
+            font-weight: 800;
             font-size: 26px;
-            font-weight: 600;
             color: var(--color-text);
             text-decoration: none;
-            letter-spacing: -0.02em;
         }
-
-        .navbar-brand span {
-            color: var(--color-accent);
-        }
+        .navbar-brand .blob-icon { width: 32px; height: 32px; }
 
         .nav-links {
             display: flex;
-            gap: 36px;
             align-items: center;
+            gap: 32px;
         }
-
         .nav-links a {
             font-family: var(--font-body);
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 15px;
+            font-weight: 600;
             color: var(--color-muted);
             text-decoration: none;
-            letter-spacing: 0.03em;
-            text-transform: uppercase;
             position: relative;
-            transition: color 0.3s ease;
+            transition: color 0.25s ease;
         }
-
+        .nav-links a:hover,
+        .nav-links a.active { color: var(--color-text); }
         .nav-links a::after {
             content: '';
             position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: var(--color-accent);
-            transition: width 0.3s var(--ease-out-expo);
+            bottom: -4px; left: 0;
+            width: 0; height: 2.5px;
+            background: var(--color-primary);
+            border-radius: 2px;
+            transition: width 0.3s ease;
         }
-
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: var(--color-text);
-        }
-
         .nav-links a:hover::after,
-        .nav-links a.active::after {
-            width: 100%;
-        }
+        .nav-links a.active::after { width: 100%; }
 
         .nav-cta {
             font-family: var(--font-body);
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            color: var(--color-bg) !important;
-            background: var(--color-primary);
-            padding: 10px 24px;
-            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--color-text) !important;
+            background: var(--color-secondary);
+            padding: 10px 26px;
+            border-radius: var(--radius-pill);
             text-decoration: none;
-            transition: transform 0.3s var(--ease-spring), box-shadow 0.3s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-
         .nav-cta::after { display: none !important; }
-
         .nav-cta:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(74, 140, 111, 0.3);
+            transform: scale(1.04);
+            box-shadow: 0 4px 16px rgba(200, 245, 66, 0.4);
         }
 
-        /* Mobile menu toggle */
         .nav-toggle {
             display: none;
             flex-direction: column;
@@ -219,150 +159,96 @@
             cursor: pointer;
             padding: 4px;
         }
-
         .nav-toggle span {
             display: block;
-            width: 24px;
-            height: 2px;
+            width: 24px; height: 2.5px;
             background: var(--color-text);
             border-radius: 2px;
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
         /* ============================================================
-           Hero Section
+           Hero
            ============================================================ */
         .hero {
             min-height: 100vh;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
             align-items: center;
             padding: 120px 48px 80px;
+            max-width: 1280px;
+            margin: 0 auto;
             gap: 60px;
-            position: relative;
-            overflow: hidden;
         }
 
-        .hero-content {
-            max-width: 600px;
-        }
-
-        .hero-eyebrow {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--color-accent);
-            margin-bottom: 24px;
-            opacity: 0;
-            transform: translateY(15px);
-            animation: heroFadeIn 0.7s var(--ease-out-expo) 0.1s forwards;
-        }
+        .hero-content { flex: 1; max-width: 620px; }
 
         .hero-title {
             font-family: var(--font-display);
-            font-size: clamp(42px, 5.5vw, 76px);
-            font-weight: 400;
+            font-weight: 800;
+            font-size: clamp(40px, 5vw, 68px);
             line-height: 1.08;
             letter-spacing: -0.03em;
             color: var(--color-text);
-            margin-bottom: 28px;
+            margin-bottom: 24px;
             opacity: 0;
-            transform: translateY(20px);
-            animation: heroFadeIn 0.8s var(--ease-out-expo) 0.2s forwards;
+            transform: translateY(-10px);
+            animation: heroIn 0.6s ease 0.1s forwards;
         }
-
-        .hero-title em {
-            font-style: italic;
-            color: var(--color-primary);
+        .hero-title .accent {
+            position: relative;
+            display: inline-block;
+        }
+        .hero-title .accent::after {
+            content: '';
+            position: absolute;
+            bottom: 2px; left: -4px; right: -4px;
+            height: 14px;
+            background: var(--color-secondary);
+            border-radius: 4px;
+            opacity: 0.7;
+            z-index: -1;
         }
 
         .hero-subtitle {
             font-size: 18px;
-            line-height: 1.7;
+            font-weight: 400;
             color: var(--color-muted);
-            max-width: 480px;
-            margin-bottom: 40px;
+            max-width: 460px;
+            margin-bottom: 36px;
             opacity: 0;
-            transform: translateY(20px);
-            animation: heroFadeIn 0.8s var(--ease-out-expo) 0.35s forwards;
+            transform: translateY(-10px);
+            animation: heroIn 0.6s ease 0.25s forwards;
         }
 
         .hero-actions {
             display: flex;
-            gap: 16px;
-            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
             opacity: 0;
-            transform: translateY(20px);
-            animation: heroFadeIn 0.8s var(--ease-out-expo) 0.5s forwards;
+            transform: translateY(-10px);
+            animation: heroIn 0.6s ease 0.4s forwards;
         }
 
-        @keyframes heroFadeIn {
+        @keyframes heroIn {
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Abstract shape */
         .hero-visual {
-            position: relative;
+            flex: 0 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100%;
-            min-height: 400px;
         }
 
-        .hero-shape {
-            width: 380px;
-            height: 460px;
-            border-radius: 40% 60% 55% 45% / 50% 40% 60% 50%;
-            background: linear-gradient(135deg, rgba(74, 140, 111, 0.15) 0%, rgba(201, 168, 76, 0.08) 100%);
-            border: 1px solid rgba(74, 140, 111, 0.12);
-            animation: shapeMorph 8s ease-in-out infinite alternate;
-            position: relative;
+        /* Floating blob mascot */
+        .blob-mascot {
+            width: 260px;
+            height: 260px;
+            animation: blobFloat 3s ease-in-out infinite;
         }
-
-        .hero-shape::before {
-            content: '';
-            position: absolute;
-            inset: 30px;
-            border-radius: inherit;
-            background: linear-gradient(135deg, rgba(74, 140, 111, 0.1) 0%, rgba(201, 168, 76, 0.05) 100%);
-            border: 1px solid rgba(74, 140, 111, 0.08);
-        }
-
-        .hero-shape::after {
-            content: '';
-            position: absolute;
-            inset: 60px;
-            border-radius: inherit;
-            background: radial-gradient(circle at 40% 40%, rgba(201, 168, 76, 0.12) 0%, transparent 60%);
-        }
-
-        @keyframes shapeMorph {
-            0% { border-radius: 40% 60% 55% 45% / 50% 40% 60% 50%; }
-            33% { border-radius: 55% 45% 40% 60% / 45% 55% 45% 55%; }
-            66% { border-radius: 45% 55% 60% 40% / 55% 45% 55% 45%; }
-            100% { border-radius: 50% 50% 45% 55% / 40% 60% 50% 50%; }
-        }
-
-        /* Floating particles */
-        .particle {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--color-accent);
-            opacity: 0.3;
-            animation: particleFloat 6s ease-in-out infinite;
-        }
-
-        .particle:nth-child(2) { top: 20%; left: 15%; animation-delay: -1s; width: 4px; height: 4px; }
-        .particle:nth-child(3) { top: 70%; right: 10%; animation-delay: -3s; width: 8px; height: 8px; opacity: 0.15; }
-        .particle:nth-child(4) { bottom: 15%; left: 30%; animation-delay: -5s; }
-
-        @keyframes particleFloat {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-20px) scale(1.2); }
+        @keyframes blobFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
 
         /* ============================================================
@@ -375,396 +261,383 @@
             gap: 8px;
             font-family: var(--font-body);
             font-size: 15px;
-            font-weight: 500;
+            font-weight: 700;
             padding: 16px 36px;
-            border-radius: 100px;
+            border-radius: var(--radius-pill);
             border: none;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s var(--ease-spring), box-shadow 0.3s ease;
             text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
+        .btn:active { transform: scale(0.97) !important; }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--color-primary) 0%, #3d7a5e 100%);
-            color: var(--color-bg);
+            background: var(--color-primary);
+            color: #fff;
         }
-
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(74, 140, 111, 0.35);
+            transform: scale(1.04);
+            box-shadow: 0 8px 24px rgba(67, 97, 238, 0.3);
         }
 
         .btn-secondary {
-            background: transparent;
+            background: var(--color-surface);
             color: var(--color-text);
-            border: 1px solid var(--color-border);
+            border: 2px solid var(--color-border);
         }
-
         .btn-secondary:hover {
-            border-color: var(--color-muted);
-            transform: translateY(-2px);
-        }
-
-        /* Ripple effect */
-        .btn .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.25);
-            transform: scale(0);
-            animation: rippleAnim 0.6s ease-out;
-            pointer-events: none;
-        }
-
-        @keyframes rippleAnim {
-            to { transform: scale(4); opacity: 0; }
+            transform: scale(1.04);
+            border-color: var(--color-primary);
         }
 
         /* ============================================================
-           Section Shared Styles
+           Section shared
            ============================================================ */
         .section {
-            padding: 120px 48px;
+            padding: 100px 48px;
             max-width: 1280px;
             margin: 0 auto;
         }
-
         .section-label {
             font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.18em;
+            font-size: 12px;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: var(--color-accent);
-            margin-bottom: 16px;
+            color: var(--color-primary);
+            margin-bottom: 12px;
         }
-
         .section-title {
             font-family: var(--font-display);
-            font-size: clamp(32px, 3.5vw, 52px);
-            font-weight: 400;
+            font-weight: 800;
+            font-size: clamp(28px, 3vw, 44px);
             line-height: 1.15;
             letter-spacing: -0.02em;
             color: var(--color-text);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
-
         .section-desc {
             font-size: 17px;
             color: var(--color-muted);
-            max-width: 560px;
+            max-width: 520px;
             line-height: 1.75;
         }
 
         /* ============================================================
-           How It Works — 3 Steps with Connecting Line
+           Features — 3 cards
            ============================================================ */
-        .steps-section {
-            padding: 120px 48px;
-            max-width: 1280px;
-            margin: 0 auto;
+        .features-section { padding: 100px 48px; max-width: 1280px; margin: 0 auto; }
+        .features-header { text-align: center; margin-bottom: 56px; }
+        .features-header .section-desc { margin: 0 auto; }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
         }
 
-        .steps-header {
-            text-align: center;
-            margin-bottom: 80px;
+        .feature-card {
+            background: var(--color-surface);
+            border-radius: var(--radius-card);
+            padding: 36px 32px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--color-border);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            position: relative;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-card-hover);
+        }
+        /* Dashed accent on top */
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: 32px; right: 32px;
+            height: 2px;
+            border-top: 2px dashed var(--color-primary);
+            border-radius: 2px;
         }
 
-        .steps-header .section-desc {
-            margin: 0 auto;
+        .feature-icon {
+            width: 56px; height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
         }
+        .feature-icon svg { width: 28px; height: 28px; }
+        .feature-icon.lime { background: var(--color-secondary); }
+        .feature-icon.pink { background: rgba(255, 107, 157, 0.15); }
+        .feature-icon.sky  { background: rgba(168, 218, 255, 0.3); }
+
+        .feature-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--color-text);
+            margin-bottom: 8px;
+        }
+        .feature-desc {
+            font-size: 15px;
+            color: var(--color-muted);
+            line-height: 1.7;
+        }
+
+        /* ============================================================
+           How it works — 3 steps
+           ============================================================ */
+        .steps-section { padding: 100px 48px; max-width: 1000px; margin: 0 auto; }
+        .steps-header { text-align: center; margin-bottom: 64px; }
+        .steps-header .section-desc { margin: 0 auto; }
 
         .steps-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 48px;
+            gap: 40px;
             position: relative;
         }
-
-        /* Connecting animated line */
+        /* Connecting dotted line */
         .steps-grid::before {
             content: '';
             position: absolute;
-            top: 48px;
-            left: calc(16.66% + 24px);
-            right: calc(16.66% + 24px);
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--color-border) 20%, var(--color-border) 80%, transparent);
+            top: 40px;
+            left: calc(16.66% + 20px);
+            right: calc(16.66% + 20px);
+            height: 2px;
+            border-top: 2px dashed var(--color-primary);
+            opacity: 0.4;
         }
 
-        .steps-grid::after {
-            content: '';
-            position: absolute;
-            top: 48px;
-            left: calc(16.66% + 24px);
-            width: 0;
-            height: 1px;
-            background: var(--color-primary);
-            animation: lineGrow 2s var(--ease-out-expo) 0.5s forwards;
-        }
-
-        @keyframes lineGrow {
-            to { width: calc(66.66% - 48px); }
-        }
-
-        .step-card {
-            text-align: center;
-            position: relative;
-        }
+        .step-card { text-align: center; position: relative; }
 
         .step-number {
-            width: 96px;
-            height: 96px;
+            width: 80px; height: 80px;
             border-radius: 50%;
             background: var(--color-surface);
-            border: 1px solid var(--color-border);
+            border: 2px dashed var(--color-primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 28px;
+            margin: 0 auto 20px;
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 28px;
+            color: var(--color-primary);
             position: relative;
             z-index: 1;
         }
 
-        .step-number svg {
-            width: 36px;
-            height: 36px;
-            stroke: var(--color-primary);
-            fill: none;
-            stroke-width: 1.5;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        /* SVG ring animation */
-        .step-number::before {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            border-radius: 50%;
-            border: 1px solid transparent;
-            border-top-color: var(--color-accent);
-            animation: ringSpin 3s linear infinite;
-        }
-
-        @keyframes ringSpin {
-            to { transform: rotate(360deg); }
-        }
-
         .step-title {
             font-family: var(--font-display);
-            font-size: 24px;
-            font-weight: 500;
+            font-weight: 700;
+            font-size: 20px;
             color: var(--color-text);
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
-
         .step-desc {
             font-size: 15px;
             color: var(--color-muted);
             line-height: 1.7;
-            max-width: 280px;
+            max-width: 260px;
             margin: 0 auto;
         }
 
         /* ============================================================
-           Journal Section (the actual app)
+           CTA Banner
            ============================================================ */
-        .journal-section {
-            padding: 120px 48px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .journal-header {
-            text-align: center;
-            margin-bottom: 56px;
-        }
-
-        .journal-header .section-desc {
-            margin: 0 auto;
-        }
-
-        .journal-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 24px;
-            padding: 48px;
+        .cta-banner {
+            margin: 0 48px 100px;
+            max-width: 1184px;
+            margin-left: auto;
+            margin-right: auto;
+            background: var(--color-primary);
+            border-radius: var(--radius-card);
+            padding: 64px 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
             position: relative;
             overflow: hidden;
         }
-
-        .journal-card::before {
+        .cta-banner::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+            right: -20px; bottom: -20px;
+            width: 200px; height: 200px;
+            border-radius: 50%;
+            background: var(--color-secondary);
+            opacity: 0.15;
         }
 
-        /* Mood slider */
-        .mood-section {
-            text-align: center;
-            margin-bottom: 36px;
-        }
-
-        .mood-display {
-            display: flex;
-            align-items: baseline;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .mood-number {
+        .cta-banner-title {
             font-family: var(--font-display);
-            font-size: 56px;
-            font-weight: 400;
-            color: var(--color-primary);
-            line-height: 1;
+            font-weight: 800;
+            font-size: clamp(26px, 3vw, 38px);
+            color: var(--color-secondary);
+            line-height: 1.2;
+        }
+        .cta-banner-desc {
+            font-size: 16px;
+            color: rgba(255,255,255,0.8);
+            margin-top: 8px;
+        }
+        .cta-banner .btn {
+            background: var(--color-secondary);
+            color: var(--color-text);
+            white-space: nowrap;
+            position: relative;
+            z-index: 1;
+        }
+        .cta-banner .btn:hover {
+            box-shadow: 0 8px 24px rgba(200, 245, 66, 0.4);
         }
 
-        .mood-emoji {
-            font-size: 40px;
-            line-height: 1;
+        /* ============================================================
+           Journal Section
+           ============================================================ */
+        .journal-section {
+            padding: 100px 48px;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+        .journal-header { text-align: center; margin-bottom: 48px; }
+        .journal-header .section-desc { margin: 0 auto; }
+
+        .journal-card {
+            background: var(--color-surface);
+            border: 2px dashed var(--color-primary);
+            border-radius: var(--radius-card);
+            padding: 44px;
+            position: relative;
         }
 
-        .mood-label {
+        /* Mood selector — blob icons */
+        .mood-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .mood-blob {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            border: 2px solid var(--color-border);
+            background: var(--color-surface);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .mood-blob:hover { transform: scale(1.1); }
+        .mood-blob.active {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            transform: scale(1.1);
+        }
+        .mood-blob svg { width: 24px; height: 24px; }
+
+        .mood-value {
+            text-align: center;
             font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
+            font-size: 13px;
             color: var(--color-muted);
+            margin-bottom: 24px;
         }
 
-        input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 100%;
-            max-width: 400px;
-            height: 3px;
-            background: var(--color-border);
-            border-radius: 2px;
-            outline: none;
-            cursor: pointer;
-            margin: 16px 0;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: var(--color-primary);
-            cursor: pointer;
-            box-shadow: 0 0 12px rgba(74, 140, 111, 0.4);
-            transition: transform 0.2s var(--ease-spring);
-        }
-
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.15);
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: var(--color-primary);
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 0 12px rgba(74, 140, 111, 0.4);
-        }
-
-        /* Thought input */
+        /* Thought textarea */
         .form-label {
             display: block;
             font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.15em;
+            font-size: 12px;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
             color: var(--color-muted);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .thought-input {
             width: 100%;
-            min-height: 120px;
+            min-height: 130px;
             padding: 20px;
             font-family: var(--font-body);
             font-size: 16px;
             line-height: 1.7;
             color: var(--color-text);
-            background: rgba(15, 26, 20, 0.6);
-            border: 1px solid var(--color-border);
+            background: var(--color-bg);
+            border: 2px dashed var(--color-border);
             border-radius: 16px;
             outline: none;
             resize: vertical;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
-
-        .thought-input::placeholder {
-            color: var(--color-muted);
-            opacity: 0.6;
-        }
-
+        .thought-input::placeholder { color: var(--color-muted); opacity: 0.5; }
         .thought-input:focus {
             border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(74, 140, 111, 0.1);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.08);
         }
 
-        /* Submit button */
+        /* Tag stickers */
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .tag-sticker {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            padding: 5px 14px;
+            border-radius: var(--radius-pill);
+            border: 1.5px solid var(--color-border);
+            background: var(--color-surface);
+            color: var(--color-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .tag-sticker:hover { border-color: var(--color-primary); color: var(--color-primary); }
+        .tag-sticker.active {
+            background: var(--color-primary);
+            color: #fff;
+            border-color: var(--color-primary);
+        }
+        .tag-sticker.lime { background: var(--color-secondary); color: var(--color-text); border-color: var(--color-secondary); }
+        .tag-sticker.pink { background: rgba(255,107,157,0.15); color: var(--color-pink); border-color: var(--color-pink); }
+        .tag-sticker.yellow { background: rgba(255,209,102,0.2); color: #b8860b; border-color: var(--color-yellow); }
+
+        /* Submit */
         .submit-btn {
             display: block;
             width: 100%;
             padding: 18px;
             margin-top: 28px;
             font-family: var(--font-body);
-            font-size: 15px;
-            font-weight: 500;
-            letter-spacing: 0.04em;
-            color: var(--color-bg);
-            background: linear-gradient(135deg, var(--color-primary) 0%, #3d7a5e 100%);
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            background: var(--color-primary);
             border: none;
-            border-radius: 100px;
+            border-radius: var(--radius-pill);
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s var(--ease-spring), box-shadow 0.3s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-
         .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(74, 140, 111, 0.35);
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(67, 97, 238, 0.3);
         }
+        .submit-btn:active { transform: scale(0.97) !important; }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        .submit-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .submit-btn .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.25);
-            transform: scale(0);
-            animation: rippleAnim 0.6s ease-out;
-            pointer-events: none;
-        }
-
-        /* Loading dots */
         .loading-dots span {
             display: inline-block;
             opacity: 0;
             animation: dotFade 1.4s infinite;
         }
-
         .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
         .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-
         @keyframes dotFade {
             0%, 60%, 100% { opacity: 0; }
             30% { opacity: 1; }
@@ -773,130 +646,115 @@
         /* AI Response */
         .response-area {
             display: none;
-            margin-top: 32px;
+            margin-top: 28px;
             opacity: 0;
             transform: translateY(12px);
         }
-
         .response-area.visible {
             display: block;
-            animation: fadeSlideUp 0.5s var(--ease-out-expo) forwards;
+            animation: fadeSlideUp 0.5s ease forwards;
         }
-
         @keyframes fadeSlideUp {
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .response-section-label {
+        .response-label {
             font-family: var(--font-mono);
-            font-size: 10px;
-            letter-spacing: 0.18em;
+            font-size: 11px;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
             color: var(--color-muted);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .distortion-pill {
             display: inline-block;
-            background: rgba(201, 168, 76, 0.12);
-            color: var(--color-accent);
-            border: 1px solid rgba(201, 168, 76, 0.2);
-            border-radius: 100px;
-            padding: 6px 18px;
+            background: rgba(255, 107, 157, 0.12);
+            color: var(--color-pink);
+            border-radius: var(--radius-pill);
+            padding: 5px 16px;
             font-family: var(--font-mono);
             font-size: 13px;
-            letter-spacing: 0.04em;
+            font-weight: 700;
         }
 
         .reframe-box {
-            margin-top: 20px;
-            background: rgba(74, 140, 111, 0.08);
-            border-left: 2px solid var(--color-primary);
+            margin-top: 16px;
+            background: rgba(67, 97, 238, 0.05);
+            border-left: 3px solid var(--color-primary);
             border-radius: 0 12px 12px 0;
-            padding: 20px 24px;
+            padding: 18px 22px;
             font-size: 16px;
             line-height: 1.8;
             color: var(--color-text);
         }
 
-        /* Error */
         .error {
-            color: #c47a7a;
-            background: rgba(196, 122, 122, 0.08);
-            border: 1px solid rgba(196, 122, 122, 0.15);
-            padding: 14px 20px;
+            color: #c44;
+            background: rgba(204, 68, 68, 0.06);
+            border: 1px solid rgba(204, 68, 68, 0.12);
+            padding: 12px 18px;
             border-radius: 12px;
-            margin-top: 20px;
+            margin-top: 16px;
             font-size: 14px;
             display: none;
         }
-
         .error.visible { display: block; }
 
         /* ============================================================
            Past Entries
            ============================================================ */
         .entries-section {
-            padding: 0 48px 120px;
-            max-width: 800px;
+            padding: 0 48px 100px;
+            max-width: 760px;
             margin: 0 auto;
         }
-
         .entries-card {
             background: var(--color-surface);
+            border-radius: var(--radius-card);
+            padding: 36px;
+            box-shadow: var(--shadow-card);
             border: 1px solid var(--color-border);
-            border-radius: 24px;
-            padding: 40px;
         }
-
         .entries-title {
             font-family: var(--font-display);
-            font-size: 28px;
-            font-weight: 500;
+            font-weight: 700;
+            font-size: 24px;
             color: var(--color-text);
-            margin-bottom: 32px;
+            margin-bottom: 24px;
         }
 
         .entry-item {
-            padding: 24px 0;
+            padding: 20px 0;
             border-bottom: 1px solid var(--color-border);
         }
-
         .entry-item:last-child { border-bottom: none; }
 
         .entry-header {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
-
         .entry-mood {
             font-family: var(--font-display);
-            font-size: 28px;
-            font-weight: 400;
+            font-weight: 700;
+            font-size: 24px;
             color: var(--color-primary);
         }
-
         .entry-date {
             font-family: var(--font-mono);
             font-size: 11px;
             color: var(--color-muted);
-            letter-spacing: 0.04em;
         }
-
         .entry-thought {
             font-style: italic;
             color: var(--color-muted);
             font-size: 15px;
-            margin: 10px 0;
+            margin: 8px 0;
             line-height: 1.6;
         }
-
-        .entry-distortion {
-            margin-bottom: 10px;
-        }
-
+        .entry-distortion { margin-bottom: 8px; }
         .entry-reframe {
             font-size: 14px;
             color: var(--color-muted);
@@ -909,7 +767,6 @@
             font-size: 15px;
             padding: 40px 0;
         }
-
         .loading {
             text-align: center;
             color: var(--color-muted);
@@ -918,488 +775,87 @@
         }
 
         /* ============================================================
-           Service Cards — Asymmetric Grid
-           ============================================================ */
-        .services-section {
-            padding: 120px 48px;
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-
-        .services-header {
-            margin-bottom: 64px;
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            grid-template-rows: auto;
-            gap: 24px;
-        }
-
-        .service-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 20px;
-            padding: 36px;
-            transition: transform 0.3s var(--ease-spring), box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .service-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .service-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.2);
-        }
-
-        .service-card:hover::before { opacity: 1; }
-
-        /* Asymmetric layout */
-        .service-card:nth-child(1) { grid-column: 1 / 8; }
-        .service-card:nth-child(2) { grid-column: 8 / 13; }
-        .service-card:nth-child(3) { grid-column: 1 / 5; }
-        .service-card:nth-child(4) { grid-column: 5 / 13; }
-
-        .service-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            background: rgba(74, 140, 111, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .service-icon svg {
-            width: 24px;
-            height: 24px;
-            stroke: var(--color-primary);
-            fill: none;
-            stroke-width: 1.5;
-        }
-
-        .service-title {
-            font-family: var(--font-display);
-            font-size: 22px;
-            font-weight: 500;
-            color: var(--color-text);
-            margin-bottom: 10px;
-        }
-
-        .service-desc {
-            font-size: 15px;
-            color: var(--color-muted);
-            line-height: 1.7;
-        }
-
-        /* ============================================================
-           Testimonials Carousel
-           ============================================================ */
-        .testimonials-section {
-            padding: 120px 0;
-            overflow: hidden;
-        }
-
-        .testimonials-header {
-            text-align: center;
-            padding: 0 48px;
-            margin-bottom: 64px;
-        }
-
-        .testimonials-header .section-desc {
-            margin: 0 auto;
-        }
-
-        .carousel-wrapper {
-            position: relative;
-            padding: 0 48px;
-        }
-
-        /* Gradient fade on edges */
-        .carousel-wrapper::before,
-        .carousel-wrapper::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 80px;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        .carousel-wrapper::before {
-            left: 0;
-            background: linear-gradient(90deg, var(--color-bg), transparent);
-        }
-
-        .carousel-wrapper::after {
-            right: 0;
-            background: linear-gradient(-90deg, var(--color-bg), transparent);
-        }
-
-        .carousel-track {
-            display: flex;
-            gap: 24px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            padding: 8px 0 24px;
-        }
-
-        .carousel-track::-webkit-scrollbar { display: none; }
-
-        .testimonial-card {
-            flex: 0 0 380px;
-            scroll-snap-align: start;
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 20px;
-            padding: 36px;
-            position: relative;
-        }
-
-        .testimonial-quote {
-            font-family: var(--font-display);
-            font-size: 20px;
-            font-style: italic;
-            line-height: 1.6;
-            color: var(--color-text);
-            margin-bottom: 24px;
-        }
-
-        .testimonial-quote::before {
-            content: '\201C';
-            font-size: 48px;
-            color: var(--color-primary);
-            line-height: 0;
-            vertical-align: -0.35em;
-            margin-right: 4px;
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .testimonial-avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-display);
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--color-bg);
-        }
-
-        .testimonial-name {
-            font-size: 15px;
-            font-weight: 500;
-            color: var(--color-text);
-        }
-
-        .testimonial-role {
-            font-size: 13px;
-            color: var(--color-muted);
-        }
-
-        /* ============================================================
-           Stats Row
-           ============================================================ */
-        .stats-section {
-            padding: 80px 48px;
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 32px;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 32px 16px;
-            border-radius: 20px;
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            transition: transform 0.3s var(--ease-spring);
-        }
-
-        .stat-item:hover {
-            transform: translateY(-4px);
-        }
-
-        .stat-number {
-            font-family: var(--font-display);
-            font-size: 48px;
-            font-weight: 400;
-            color: var(--color-accent);
-            line-height: 1;
-            margin-bottom: 8px;
-        }
-
-        .stat-label {
-            font-size: 14px;
-            color: var(--color-muted);
-            letter-spacing: 0.02em;
-        }
-
-        /* ============================================================
-           CTA Section
-           ============================================================ */
-        .cta-section {
-            padding: 120px 48px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-section::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(ellipse 60% 50% at 50% 50%, rgba(74, 140, 111, 0.1) 0%, transparent 70%);
-        }
-
-        .cta-content {
-            position: relative;
-            z-index: 1;
-            max-width: 640px;
-            margin: 0 auto;
-        }
-
-        .cta-title {
-            font-family: var(--font-display);
-            font-size: clamp(36px, 4vw, 56px);
-            font-weight: 400;
-            line-height: 1.12;
-            letter-spacing: -0.02em;
-            color: var(--color-text);
-            margin-bottom: 20px;
-        }
-
-        .cta-title em {
-            font-style: italic;
-            color: var(--color-primary);
-        }
-
-        .cta-desc {
-            font-size: 17px;
-            color: var(--color-muted);
-            margin-bottom: 40px;
-            line-height: 1.7;
-        }
-
-        /* ============================================================
            Footer
            ============================================================ */
         .footer {
             border-top: 1px solid var(--color-border);
-            padding: 64px 48px 40px;
-            position: relative;
+            padding: 48px;
+            text-align: center;
         }
-
-        /* Abstract wave SVG */
-        .footer-wave {
-            position: absolute;
-            top: -1px;
-            left: 0;
-            right: 0;
-            height: 40px;
-            overflow: hidden;
-        }
-
-        .footer-wave svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .footer-content {
-            max-width: 1280px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 48px;
-        }
-
         .footer-brand {
             font-family: var(--font-display);
-            font-size: 24px;
-            font-weight: 600;
+            font-weight: 800;
+            font-size: 22px;
             color: var(--color-text);
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
-
-        .footer-brand span { color: var(--color-accent); }
-
         .footer-tagline {
             font-size: 14px;
             color: var(--color-muted);
-            line-height: 1.7;
-            max-width: 280px;
-        }
-
-        .footer-heading {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--color-muted);
             margin-bottom: 20px;
         }
-
         .footer-links {
-            list-style: none;
             display: flex;
-            flex-direction: column;
-            gap: 12px;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
         }
-
         .footer-links a {
             font-size: 14px;
             color: var(--color-muted);
             text-decoration: none;
-            transition: color 0.3s ease;
+            transition: color 0.25s ease;
         }
-
         .footer-links a:hover { color: var(--color-text); }
-
         .footer-bottom {
-            max-width: 1280px;
-            margin: 48px auto 0;
-            padding-top: 24px;
-            border-top: 1px solid var(--color-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin-top: 24px;
             font-size: 13px;
             color: var(--color-muted);
         }
-
-        .footer-bottom a {
-            color: var(--color-muted);
-            text-decoration: none;
-        }
-
-        .footer-bottom a:hover { color: var(--color-text); }
 
         /* ============================================================
            Responsive
            ============================================================ */
         @media (max-width: 1024px) {
-            .hero {
-                grid-template-columns: 1fr;
-                text-align: center;
-                padding: 140px 32px 80px;
-            }
-
+            .hero { flex-direction: column; text-align: center; padding: 120px 32px 60px; }
             .hero-content { max-width: 100%; }
             .hero-subtitle { margin-left: auto; margin-right: auto; }
             .hero-actions { justify-content: center; }
             .hero-visual { display: none; }
-
-            .steps-grid { grid-template-columns: 1fr; gap: 40px; }
-            .steps-grid::before,
-            .steps-grid::after { display: none; }
-
-            .services-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .service-card:nth-child(1),
-            .service-card:nth-child(2),
-            .service-card:nth-child(3),
-            .service-card:nth-child(4) {
-                grid-column: 1 / -1;
-            }
-
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-
-            .footer-content {
-                grid-template-columns: 1fr 1fr;
-                gap: 32px;
-            }
+            .features-grid { grid-template-columns: 1fr; }
+            .steps-grid { grid-template-columns: 1fr; gap: 32px; }
+            .steps-grid::before { display: none; }
+            .cta-banner { flex-direction: column; text-align: center; padding: 48px 32px; }
         }
 
         @media (max-width: 768px) {
-            .navbar { padding: 16px 24px; }
-            .navbar.scrolled { padding: 12px 24px; }
-
+            .navbar { padding: 14px 24px; }
             .nav-links {
                 display: none;
                 position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(15, 26, 20, 0.97);
+                inset: 0;
+                background: rgba(253, 250, 245, 0.97);
                 backdrop-filter: blur(20px);
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                gap: 32px;
+                gap: 28px;
                 z-index: 99;
             }
-
             .nav-links.open { display: flex; }
-
             .nav-toggle { display: flex; z-index: 101; }
-
-            .section,
-            .steps-section,
-            .services-section,
-            .stats-section,
-            .cta-section {
-                padding: 80px 24px;
-            }
-
-            .journal-section,
-            .entries-section {
-                padding-left: 24px;
-                padding-right: 24px;
-            }
-
-            .journal-card,
-            .entries-card {
-                padding: 28px;
-            }
-
-            .testimonial-card { flex: 0 0 300px; }
-
-            .stats-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
-
-            .stat-number { font-size: 36px; }
-
-            .footer-content { grid-template-columns: 1fr; gap: 32px; }
-            .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
-
-            .carousel-wrapper { padding: 0 24px; }
+            .section, .features-section, .steps-section { padding: 64px 24px; }
+            .journal-section, .entries-section { padding-left: 24px; padding-right: 24px; }
+            .journal-card, .entries-card { padding: 28px; }
+            .cta-banner { margin: 0 24px 64px; padding: 40px 24px; }
+            .footer { padding: 40px 24px; }
+            .mood-blob { width: 42px; height: 42px; }
+            .mood-blob svg { width: 20px; height: 20px; }
         }
 
         @media (max-width: 480px) {
-            .hero { padding: 120px 20px 60px; }
-            .hero-title { font-size: 36px; }
+            .hero { padding: 100px 20px 48px; }
+            .hero-title { font-size: 34px; }
             .hero-actions { flex-direction: column; width: 100%; }
             .btn { width: 100%; }
         }
@@ -1407,19 +863,25 @@
 </head>
 <body>
 
-    <!-- Animated background -->
-    <div class="bg-mesh"></div>
-
     <!-- ============================================================
-         Navigation
+         Navbar
          ============================================================ -->
     <nav class="navbar" id="navbar">
-        <a href="index.html" class="navbar-brand">Mind<span>Log</span></a>
+        <a href="/" class="navbar-brand">
+            <!-- Blob mascot SVG -->
+            <svg class="blob-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 10 C70 5, 92 20, 90 45 C88 68, 72 92, 50 90 C28 88, 8 70, 10 48 C12 24, 30 15, 50 10Z" fill="#4361EE"/>
+                <circle cx="38" cy="48" r="4" fill="#1A1A2E"/>
+                <circle cx="62" cy="48" r="4" fill="#1A1A2E"/>
+                <path d="M38 62 Q50 72 62 62" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/>
+            </svg>
+            Blobbi
+        </a>
         <div class="nav-links" id="navLinks">
             <a href="#journal" class="active">Journal</a>
             <a href="dashboard.html">Dashboard</a>
-            <a href="#how-it-works">How It Works</a>
-            <a href="#journal" class="nav-cta">Start Writing</a>
+            <a href="#how-it-works">How it works</a>
+            <a href="#journal" class="nav-cta">Start for free</a>
         </div>
         <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
             <span></span><span></span><span></span>
@@ -1431,81 +893,107 @@
          ============================================================ -->
     <section class="hero">
         <div class="hero-content">
-            <p class="hero-eyebrow">A space for growth, not just crisis</p>
-            <h1 class="hero-title">Your thoughts<br>deserve <em>gentle</em><br>attention.</h1>
+            <h1 class="hero-title">
+                know yourself,<br>one <span class="accent">feeling</span> at a time
+            </h1>
             <p class="hero-subtitle">
-                Log a negative thought. Let AI identify the distortion.
-                Receive a kinder perspective. Track your patterns over time.
+                Log a thought. Spot the distortion. Get a kinder perspective.
+                Your private journal, powered by gentle AI.
             </p>
             <div class="hero-actions">
-                <a href="#journal" class="btn btn-primary">Begin your journal</a>
-                <a href="#how-it-works" class="btn btn-secondary">Learn more</a>
+                <a href="#journal" class="btn btn-primary">Start journaling</a>
+                <a href="#how-it-works" class="btn btn-secondary">How it works</a>
             </div>
         </div>
         <div class="hero-visual">
-            <div class="hero-shape"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
+            <!-- Large blob mascot -->
+            <svg class="blob-mascot" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 10 C70 5, 92 20, 90 45 C88 68, 72 92, 50 90 C28 88, 8 70, 10 48 C12 24, 30 15, 50 10Z" fill="#4361EE"/>
+                <circle cx="38" cy="48" r="4" fill="#1A1A2E"/>
+                <circle cx="62" cy="48" r="4" fill="#1A1A2E"/>
+                <path d="M38 62 Q50 72 62 62" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/>
+            </svg>
         </div>
     </section>
 
     <!-- ============================================================
-         How It Works
+         Features
+         ============================================================ -->
+    <section class="features-section reveal">
+        <div class="features-header">
+            <p class="section-label">Why Blobbi</p>
+            <h2 class="section-title">Built for the way you actually think</h2>
+            <p class="section-desc">
+                Simple, private, and always here. No appointments, no waiting.
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon lime">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#1A1A2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Private by design</h3>
+                <p class="feature-desc">
+                    Your entries live in your own database. No tracking, no ads, no data sharing.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon pink">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#FF6B9D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Instant insight</h3>
+                <p class="feature-desc">
+                    AI-powered analysis in seconds. Identify distortions, get gentle reframes.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon sky">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#4361EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Patterns over time</h3>
+                <p class="feature-desc">
+                    Your dashboard reveals emotional trends and recurring distortions.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         How it works
          ============================================================ -->
     <section class="steps-section" id="how-it-works">
         <div class="steps-header reveal">
             <p class="section-label">How it works</p>
             <h2 class="section-title">Three steps to clarity</h2>
             <p class="section-desc">
-                A simple practice rooted in Cognitive Behavioral Therapy —
-                made accessible, private, and always available.
+                Rooted in CBT. Made simple.
             </p>
         </div>
 
-        <div class="steps-grid stagger-children">
+        <div class="steps-grid reveal">
             <div class="step-card">
-                <div class="step-number">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M12 20h9"/>
-                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-                    </svg>
-                </div>
+                <div class="step-number">1</div>
                 <h3 class="step-title">Write it down</h3>
-                <p class="step-desc">
-                    Capture the negative thought and rate your mood.
-                    No judgment — just honesty.
-                </p>
+                <p class="step-desc">Capture the thought and pick your mood. No judgment.</p>
             </div>
-
             <div class="step-card">
-                <div class="step-number">
-                    <svg viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10"/>
-                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-                        <circle cx="12" cy="17" r="0.5" fill="currentColor" stroke="none"/>
-                    </svg>
-                </div>
+                <div class="step-number">2</div>
                 <h3 class="step-title">AI analyzes</h3>
-                <p class="step-desc">
-                    The model identifies the cognitive distortion
-                    and offers a gentle reframe.
-                </p>
+                <p class="step-desc">Spot the cognitive distortion and get a gentle reframe.</p>
             </div>
-
             <div class="step-card">
-                <div class="step-number">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                        <polyline points="22 4 12 14.01 9 11.01"/>
-                    </svg>
-                </div>
+                <div class="step-number">3</div>
                 <h3 class="step-title">See patterns</h3>
-                <p class="step-desc">
-                    Over time, your dashboard reveals emotional
-                    trends and recurring distortions.
-                </p>
+                <p class="step-desc">Your dashboard shows mood trends and distortion frequency.</p>
             </div>
         </div>
     </section>
@@ -1515,37 +1003,64 @@
          ============================================================ -->
     <section class="journal-section" id="journal">
         <div class="journal-header reveal">
-            <p class="section-label">Your journal</p>
-            <h2 class="section-title">What's on your mind?</h2>
+            <p class="section-label">your journal</p>
+            <h2 class="section-title">what's on your mind?</h2>
             <p class="section-desc">
-                Be honest. This space is private, non-judgmental, and here to help.
+                Be honest. This space is private and here to help.
             </p>
         </div>
 
         <div class="journal-card reveal">
-            <!-- Mood slider -->
-            <div class="mood-section">
-                <div class="mood-display">
-                    <span class="mood-number" id="mood-number">5</span>
-                    <span class="mood-emoji" id="mood-emoji">😐</span>
-                </div>
-                <div class="mood-label" id="mood-label">okay</div>
-                <input type="range" id="mood" min="1" max="10" value="5">
+            <!-- Mood blob selector -->
+            <div class="mood-selector" id="mood-selector">
+                <!-- 1-2: sad -->
+                <button class="mood-blob" data-mood="1" title="Very low">
+                    <svg viewBox="0 0 100 100"><path d="M50 10 C70 5, 92 20, 90 45 C88 68, 72 92, 50 90 C28 88, 8 70, 10 48 C12 24, 30 15, 50 10Z" fill="#A8DAFF"/><circle cx="38" cy="48" r="4" fill="#1A1A2E"/><circle cx="62" cy="48" r="4" fill="#1A1A2E"/><path d="M38 66 Q50 56 62 66" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+                </button>
+                <!-- 3-4: anxious -->
+                <button class="mood-blob" data-mood="3" title="Struggling">
+                    <svg viewBox="0 0 100 100"><path d="M50 10 C70 5, 92 20, 90 45 C88 68, 72 92, 50 90 C28 88, 8 70, 10 48 C12 24, 30 15, 50 10Z" fill="#FFD166"/><circle cx="38" cy="48" r="4" fill="#1A1A2E"/><circle cx="62" cy="48" r="4" fill="#1A1A2E"/><path d="M40 64 L60 64" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+                </button>
+                <!-- 5-6: neutral -->
+                <button class="mood-blob active" data-mood="5" title="Okay">
+                    <svg viewBox="0 0 100 100"><path d="M50 10 C70 5, 92 20, 90 45 C88 68, 72 92, 50 90 C28 88, 8 70, 10 48 C12 24, 30 15, 50 10Z" fill="#E8E4F0"/><circle cx="38" cy="48" r="4" fill="#1A1A2E"/><circle cx="62" cy="48" r="4" fill="#1A1A2E"/><path d="M38 64 L62 64" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+                </button>
+                <!-- 7-8: calm -->
+                <button class="mood-blob" data-mood="7" title="Good">
+                    <svg viewBox="0 0 100 100"><path d="M50 10 C70 5, 92 20, 90 45 C88 68, 72 92, 50 90 C28 88, 8 70, 10 48 C12 24, 30 15, 50 10Z" fill="#C8F542"/><circle cx="38" cy="48" r="4" fill="#1A1A2E"/><circle cx="62" cy="48" r="4" fill="#1A1A2E"/><path d="M38 62 Q50 72 62 62" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+                </button>
+                <!-- 9-10: happy -->
+                <button class="mood-blob" data-mood="9" title="Great">
+                    <svg viewBox="0 0 100 100"><path d="M50 10 C70 5, 92 20, 90 45 C88 68, 72 92, 50 90 C28 88, 8 70, 10 48 C12 24, 30 15, 50 10Z" fill="#FF6B9D"/><circle cx="38" cy="48" r="4" fill="#1A1A2E"/><circle cx="62" cy="48" r="4" fill="#1A1A2E"/><path d="M36 60 Q50 76 64 60" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+                </button>
             </div>
+            <div class="mood-value" id="mood-value">mood: 5 / 10</div>
+
+            <!-- Hidden range for actual value -->
+            <input type="range" id="mood" min="1" max="10" value="5" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;">
 
             <!-- Thought input -->
             <label class="form-label" for="thought">What negative thought are you having?</label>
-            <textarea class="thought-input" id="thought" placeholder="e.g. I always mess things up, I'm a failure..."></textarea>
+            <textarea class="thought-input" id="thought" placeholder="e.g. I always mess things up..."></textarea>
 
-            <!-- Submit button -->
+            <!-- Tag stickers -->
+            <div class="tag-row" id="tag-row">
+                <span class="tag-sticker" data-tag="anxiety">#anxiety</span>
+                <span class="tag-sticker" data-tag="work">#work</span>
+                <span class="tag-sticker" data-tag="sleep">#sleep</span>
+                <span class="tag-sticker" data-tag="relationships">#relationships</span>
+                <span class="tag-sticker" data-tag="self-worth">#self-worth</span>
+            </div>
+
+            <!-- Submit -->
             <button class="submit-btn" id="submit-btn" onclick="submitEntry()">Analyze my thought</button>
 
             <!-- AI response -->
             <div class="response-area" id="response-area">
-                <div class="response-section-label">Cognitive distortion</div>
+                <div class="response-label">Cognitive distortion</div>
                 <div class="distortion-pill" id="response-distortion"></div>
-                <div style="margin-top: 20px;">
-                    <div class="response-section-label">A gentler perspective</div>
+                <div style="margin-top: 16px;">
+                    <div class="response-label">A gentler perspective</div>
                     <div class="reframe-box" id="response-reframe"></div>
                 </div>
             </div>
@@ -1568,229 +1083,29 @@
     </section>
 
     <!-- ============================================================
-         Service Cards
+         CTA Banner
          ============================================================ -->
-    <section class="services-section">
-        <div class="services-header reveal">
-            <p class="section-label">Why MindLog</p>
-            <h2 class="section-title">Built for the way you actually think</h2>
+    <div class="cta-banner reveal">
+        <div>
+            <h2 class="cta-banner-title">Start writing.<br>Start healing.</h2>
+            <p class="cta-banner-desc">Your first entry takes ten seconds.</p>
         </div>
-
-        <div class="services-grid stagger-children">
-            <div class="service-card">
-                <div class="service-icon">
-                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                </div>
-                <h3 class="service-title">Private by design</h3>
-                <p class="service-desc">
-                    Your entries are stored securely in your own database.
-                    No tracking, no ads, no data sharing. This is your space.
-                </p>
-            </div>
-
-            <div class="service-card">
-                <div class="service-icon">
-                    <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                </div>
-                <h3 class="service-title">Instant insight</h3>
-                <p class="service-desc">
-                    AI-powered analysis in seconds — not days waiting for an appointment.
-                </p>
-            </div>
-
-            <div class="service-card">
-                <div class="service-icon">
-                    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                </div>
-                <h3 class="service-title">CBT-rooted</h3>
-                <p class="service-desc">
-                    Based on proven cognitive behavioral therapy techniques.
-                </p>
-            </div>
-
-            <div class="service-card">
-                <div class="service-icon">
-                    <svg viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
-                </div>
-                <h3 class="service-title">Patterns over time</h3>
-                <p class="service-desc">
-                    Your dashboard reveals emotional trends, distortion frequency,
-                    and AI-generated weekly summaries so you can see your growth.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-         Testimonials
-         ============================================================ -->
-    <section class="testimonials-section">
-        <div class="testimonials-header reveal">
-            <p class="section-label">Voices</p>
-            <h2 class="section-title">What people are saying</h2>
-            <p class="section-desc">
-                Real experiences from people who made journaling a daily practice.
-            </p>
-        </div>
-
-        <div class="carousel-wrapper">
-            <div class="carousel-track">
-                <div class="testimonial-card">
-                    <p class="testimonial-quote">
-                        I never realized how often I catastrophize until I saw it in writing.
-                        MindLog made the pattern impossible to ignore — and that was the first step to changing it.
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">A</div>
-                        <div>
-                            <div class="testimonial-name">Anonymous</div>
-                            <div class="testimonial-role">Student, 20</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="testimonial-card">
-                    <p class="testimonial-quote">
-                        The reframes aren't toxic positivity. They actually feel like something
-                        a kind therapist would say. I use it every evening now.
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">M</div>
-                        <div>
-                            <div class="testimonial-name">Anonymous</div>
-                            <div class="testimonial-role">Developer, 28</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="testimonial-card">
-                    <p class="testimonial-quote">
-                        The dashboard showed me that my mood dips every Sunday.
-                        I would never have noticed that on my own. Now I prepare for it.
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">K</div>
-                        <div>
-                            <div class="testimonial-name">Anonymous</div>
-                            <div class="testimonial-role">Designer, 24</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="testimonial-card">
-                    <p class="testimonial-quote">
-                        It's not a replacement for therapy, but it's a bridge between sessions.
-                        I come to my therapist with actual data now.
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">R</div>
-                        <div>
-                            <div class="testimonial-name">Anonymous</div>
-                            <div class="testimonial-role">Graduate student, 26</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="testimonial-card">
-                    <p class="testimonial-quote">
-                        Simple, beautiful, and it doesn't feel clinical.
-                        That matters when you're already feeling vulnerable.
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">S</div>
-                        <div>
-                            <div class="testimonial-name">Anonymous</div>
-                            <div class="testimonial-role">Writer, 31</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-         Stats
-         ============================================================ -->
-    <section class="stats-section">
-        <div class="stats-grid stagger-children">
-            <div class="stat-item">
-                <div class="stat-number" data-target="9" data-suffix="">0</div>
-                <div class="stat-label">Cognitive distortions tracked</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" data-target="30" data-suffix="">0</div>
-                <div class="stat-label">Days of mood history</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" data-target="2" data-suffix="s">0</div>
-                <div class="stat-label">Average response time</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" data-target="100" data-suffix="%">0</div>
-                <div class="stat-label">Private &amp; local</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-         CTA
-         ============================================================ -->
-    <section class="cta-section">
-        <div class="cta-content reveal">
-            <h2 class="cta-title">Start writing.<br>Start <em>healing</em>.</h2>
-            <p class="cta-desc">
-                Your first entry takes ten seconds. The patterns take a little longer —
-                but they're worth it.
-            </p>
-            <a href="#journal" class="btn btn-primary">Open your journal</a>
-        </div>
-    </section>
+        <a href="#journal" class="btn">Open your journal</a>
+    </div>
 
     <!-- ============================================================
          Footer
          ============================================================ -->
     <footer class="footer">
-        <div class="footer-wave">
-            <svg viewBox="0 0 1280 40" preserveAspectRatio="none">
-                <path d="M0,20 C200,40 400,0 640,20 C880,40 1080,0 1280,20 L1280,40 L0,40 Z" fill="var(--color-border)" opacity="0.3"/>
-            </svg>
-        </div>
-        <div class="footer-content">
-            <div>
-                <div class="footer-brand">Mind<span>Log</span></div>
-                <p class="footer-tagline">
-                    A CBT thought journal powered by AI.
-                    Private, simple, and always here when you need it.
-                </p>
-            </div>
-            <div>
-                <h4 class="footer-heading">Product</h4>
-                <ul class="footer-links">
-                    <li><a href="#journal">Journal</a></li>
-                    <li><a href="dashboard.html">Dashboard</a></li>
-                    <li><a href="#how-it-works">How it works</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="footer-heading">Resources</h4>
-                <ul class="footer-links">
-                    <li><a href="https://github.com/fedyann/se-toolkit-hackathon" target="_blank">GitHub</a></li>
-                    <li><a href="#">Documentation</a></li>
-                    <li><a href="#">CBT Guide</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="footer-heading">Legal</h4>
-                <ul class="footer-links">
-                    <li><a href="#">Privacy</a></li>
-                    <li><a href="#">Terms</a></li>
-                    <li><a href="#">MIT License</a></li>
-                </ul>
-            </div>
+        <div class="footer-brand">Blobbi ˚✧</div>
+        <p class="footer-tagline">A CBT thought journal powered by AI. Private, simple, always here.</p>
+        <div class="footer-links">
+            <a href="#journal">Journal</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="https://github.com/fedyann/se-toolkit-hackathon" target="_blank">GitHub</a>
         </div>
         <div class="footer-bottom">
-            <span>&copy; 2026 MindLog. Built with care.</span>
-            <span>Not a replacement for professional therapy.</span>
+            &copy; 2026 Blobbi. Not a replacement for professional therapy.
         </div>
     </footer>
 
@@ -1798,30 +1113,21 @@
          JavaScript
          ============================================================ -->
     <script>
-        // --- Navbar scroll-aware (frosted glass) ---
+        // --- Navbar scroll ---
         const navbar = document.getElementById('navbar');
-        let lastScroll = 0;
-
         window.addEventListener('scroll', () => {
-            const currentScroll = window.scrollY;
-            navbar.classList.toggle('scrolled', currentScroll > 50);
-            lastScroll = currentScroll;
+            navbar.classList.toggle('scrolled', window.scrollY > 30);
         }, { passive: true });
 
-        // --- Mobile menu toggle ---
+        // --- Mobile menu ---
         const navToggle = document.getElementById('navToggle');
         const navLinks = document.getElementById('navLinks');
-
-        navToggle.addEventListener('click', () => {
-            navLinks.classList.toggle('open');
-        });
-
-        // Close mobile menu on link click
+        navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
         navLinks.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => navLinks.classList.remove('open'));
         });
 
-        // --- Scroll reveal (IntersectionObserver) ---
+        // --- Scroll reveal ---
         const revealObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -1829,98 +1135,38 @@
                     revealObserver.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+        }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
 
-        document.querySelectorAll('.reveal, .stagger-children').forEach(el => {
-            revealObserver.observe(el);
-        });
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-        // --- Animated stat counters ---
-        const statObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const el = entry.target;
-                    const target = parseInt(el.dataset.target);
-                    const suffix = el.dataset.suffix || '';
-                    animateCounter(el, target, suffix);
-                    statObserver.unobserve(el);
-                }
-            });
-        }, { threshold: 0.5 });
+        // --- Mood blob selector ---
+        const moodBlobs = document.querySelectorAll('.mood-blob');
+        const moodInput = document.getElementById('mood');
+        const moodValue = document.getElementById('mood-value');
 
-        document.querySelectorAll('.stat-number').forEach(el => {
-            statObserver.observe(el);
-        });
-
-        function animateCounter(el, target, suffix) {
-            const duration = 1500;
-            const start = performance.now();
-
-            function tick(now) {
-                const elapsed = now - start;
-                const progress = Math.min(elapsed / duration, 1);
-                // Ease out cubic
-                const eased = 1 - Math.pow(1 - progress, 3);
-                const current = Math.round(eased * target);
-                el.textContent = current + suffix;
-                if (progress < 1) requestAnimationFrame(tick);
-            }
-
-            requestAnimationFrame(tick);
+        function getMoodFromBlob(el) {
+            return parseInt(el.dataset.mood);
         }
 
-        // --- Ripple effect on buttons ---
-        document.querySelectorAll('.btn, .submit-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                const ripple = document.createElement('span');
-                ripple.classList.add('ripple');
-                const rect = this.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                ripple.style.width = ripple.style.height = size + 'px';
-                ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
-                ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
-                this.appendChild(ripple);
-                ripple.addEventListener('animationend', () => ripple.remove());
+        moodBlobs.forEach(blob => {
+            blob.addEventListener('click', () => {
+                moodBlobs.forEach(b => b.classList.remove('active'));
+                blob.classList.add('active');
+                const val = getMoodFromBlob(blob);
+                moodInput.value = val;
+                moodValue.textContent = `mood: ${val} / 10`;
             });
         });
 
-        // --- Mood slider ---
-        const moodSlider = document.getElementById('mood');
-        const moodNumber = document.getElementById('mood-number');
-        const moodEmoji = document.getElementById('mood-emoji');
-        const moodLabel = document.getElementById('mood-label');
-
-        const moodMeta = {
-            low:        { emoji: '😔', label: 'low' },
-            struggling: { emoji: '😕', label: 'struggling' },
-            okay:       { emoji: '😐', label: 'okay' },
-            good:       { emoji: '🙂', label: 'good' },
-            great:      { emoji: '😊', label: 'great' },
-        };
-
-        function getMoodMeta(val) {
-            if (val <= 2) return moodMeta.low;
-            if (val <= 4) return moodMeta.struggling;
-            if (val <= 6) return moodMeta.okay;
-            if (val <= 8) return moodMeta.good;
-            return moodMeta.great;
-        }
-
-        function updateMoodDisplay() {
-            const val = parseInt(moodSlider.value);
-            const meta = getMoodMeta(val);
-            moodNumber.textContent = val;
-            moodEmoji.textContent = meta.emoji;
-            moodLabel.textContent = meta.label;
-        }
-
-        moodSlider.addEventListener('input', updateMoodDisplay);
-        updateMoodDisplay();
+        // --- Tag stickers ---
+        document.querySelectorAll('.tag-sticker').forEach(tag => {
+            tag.addEventListener('click', () => tag.classList.toggle('active'));
+        });
 
         // --- Submit entry ---
         async function submitEntry() {
             const thought = document.getElementById('thought').value.trim();
-            const mood = parseInt(moodSlider.value);
+            const mood = parseInt(moodInput.value);
             const btn = document.getElementById('submit-btn');
             const responseArea = document.getElementById('response-area');
             const errorMsg = document.getElementById('error-msg');
@@ -1949,11 +1195,9 @@
                 }
 
                 const data = await res.json();
-
                 document.getElementById('response-distortion').textContent = data.distortion;
                 document.getElementById('response-reframe').textContent = data.reframe;
                 responseArea.classList.add('visible');
-
                 document.getElementById('thought').value = '';
                 loadEntries();
             } catch (err) {
@@ -1967,11 +1211,9 @@
         // --- Load entries ---
         async function loadEntries() {
             const listEl = document.getElementById('entries-list');
-
             try {
                 const res = await fetch('/api/entries');
                 if (!res.ok) throw new Error('Failed to load entries');
-
                 const entries = await res.json();
 
                 if (entries.length === 0) {
@@ -1993,7 +1235,7 @@
                     </div>
                 `).join('');
             } catch (err) {
-                listEl.innerHTML = '<div class="empty-state" style="color:#c47a7a;">Failed to load entries.</div>';
+                listEl.innerHTML = '<div class="empty-state" style="color:#c44;">Failed to load entries.</div>';
             }
         }
 
@@ -2009,7 +1251,6 @@
             return div.innerHTML;
         }
 
-        // Load entries on page load
         loadEntries();
     </script>
 </body>

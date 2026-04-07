@@ -1,4 +1,4 @@
-# Caddy reverse proxy configuration for MindLog.
+# Caddy reverse proxy configuration for Blobbi.
 #
 # Serves the static frontend at / and proxies /api to the FastAPI backend.
 # The listener port comes from the CADDY_CONTAINER_PORT env var.

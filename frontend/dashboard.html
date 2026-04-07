@@ -3,176 +3,686 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindLog — Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Chart.js from CDN -->
+    <title>Blobbi — Dashboard ˚✧</title>
+
+    <!-- Google Fonts via <link> -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Syne:wght@700;800&family=Space+Mono&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+    <style>
+        :root {
+            --color-bg: #FDFAF5;
+            --color-surface: #FFFFFF;
+            --color-primary: #4361EE;
+            --color-secondary: #C8F542;
+            --color-pink: #FF6B9D;
+            --color-yellow: #FFD166;
+            --color-sky: #A8DAFF;
+            --color-text: #1A1A2E;
+            --color-muted: #6B7A99;
+            --color-border: #E8E4F0;
+
+            --font-display: 'Syne', sans-serif;
+            --font-body: 'Nunito', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+
+            --radius-card: 20px;
+            --radius-pill: 100px;
+            --shadow-card: 0 4px 24px rgba(67, 97, 238, 0.08);
+            --shadow-card-hover: 0 8px 32px rgba(67, 97, 238, 0.14);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-image: radial-gradient(circle, var(--color-border) 1.2px, transparent 1.2px);
+            background-size: 20px 20px;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* ============================================================
+           Navbar
+           ============================================================ */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 48px;
+            background: rgba(253, 250, 245, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: box-shadow 0.3s ease;
+        }
+        .navbar.scrolled { box-shadow: 0 1px 0 var(--color-border); }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 26px;
+            color: var(--color-text);
+            text-decoration: none;
+        }
+        .navbar-brand .blob-icon { width: 32px; height: 32px; }
+
+        .nav-links { display: flex; align-items: center; gap: 32px; }
+        .nav-links a {
+            font-family: var(--font-body);
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-muted);
+            text-decoration: none;
+            position: relative;
+            transition: color 0.25s ease;
+        }
+        .nav-links a:hover,
+        .nav-links a.active { color: var(--color-text); }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 0;
+            width: 0; height: 2.5px;
+            background: var(--color-primary);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after,
+        .nav-links a.active::after { width: 100%; }
+
+        .nav-cta {
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--color-text) !important;
+            background: var(--color-secondary);
+            padding: 10px 26px;
+            border-radius: var(--radius-pill);
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .nav-cta::after { display: none !important; }
+        .nav-cta:hover { transform: scale(1.04); box-shadow: 0 4px 16px rgba(200, 245, 66, 0.4); }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .nav-toggle span {
+            display: block;
+            width: 24px; height: 2.5px;
+            background: var(--color-text);
+            border-radius: 2px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        /* ============================================================
+           Dashboard Layout
+           ============================================================ */
+        .dashboard {
+            padding: 120px 48px 80px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Greeting header */
+        .dash-header {
+            margin-bottom: 40px;
+        }
+        .dash-greeting {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: clamp(28px, 3.5vw, 42px);
+            color: var(--color-text);
+            line-height: 1.2;
+            margin-bottom: 4px;
+        }
+        .dash-date {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--color-muted);
+        }
+
+        /* Sticker badge */
+        .sticker {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: var(--radius-pill);
+            letter-spacing: 0.04em;
+        }
+        .sticker.lime { background: var(--color-secondary); color: var(--color-text); }
+        .sticker.pink { background: rgba(255, 107, 157, 0.15); color: var(--color-pink); }
+        .sticker.yellow { background: rgba(255, 209, 102, 0.2); color: #b8860b; }
+        .sticker.sky { background: rgba(168, 218, 255, 0.3); color: var(--color-primary); }
+
+        /* ============================================================
+           Streak / Stats Row
+           ============================================================ */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-pill {
+            background: var(--color-secondary);
+            border-radius: var(--radius-card);
+            padding: 24px 28px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: transform 0.25s ease;
+        }
+        .stat-pill:hover { transform: translateY(-4px); }
+        .stat-pill:nth-child(2) { background: rgba(168, 218, 255, 0.25); }
+        .stat-pill:nth-child(3) { background: rgba(255, 107, 157, 0.1); }
+
+        .stat-blob {
+            width: 44px; height: 44px;
+            flex-shrink: 0;
+        }
+
+        .stat-info { flex: 1; }
+        .stat-value {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 28px;
+            color: var(--color-text);
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 13px;
+            color: var(--color-muted);
+            margin-top: 2px;
+        }
+
+        /* ============================================================
+           Cards
+           ============================================================ */
+        .card {
+            background: var(--color-surface);
+            border-radius: var(--radius-card);
+            padding: 32px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--color-border);
+            margin-bottom: 24px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        .card-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--color-text);
+        }
+
+        /* Chart containers */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 260px;
+        }
+
+        /* ============================================================
+           Recent Entries
+           ============================================================ */
+        .recent-entry {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .recent-entry:last-child { border-bottom: none; }
+
+        .recent-entry-accent {
+            width: 4px;
+            min-height: 100%;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .recent-entry-accent.cobalt { background: var(--color-primary); }
+        .recent-entry-accent.pink { background: var(--color-pink); }
+        .recent-entry-accent.lime { background: var(--color-secondary); }
+        .recent-entry-accent.yellow { background: var(--color-yellow); }
+
+        .recent-entry-content { flex: 1; }
+        .recent-entry-thought {
+            font-size: 15px;
+            color: var(--color-text);
+            line-height: 1.5;
+            margin-bottom: 4px;
+            /* Truncate */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .recent-entry-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .recent-entry-mood {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--color-primary);
+            font-weight: 700;
+        }
+        .recent-entry-date {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--color-muted);
+        }
+
+        /* ============================================================
+           AI Summary
+           ============================================================ */
+        .summary-card {
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.06) 0%, rgba(200, 245, 66, 0.08) 100%);
+            border: 2px dashed var(--color-primary);
+            border-radius: var(--radius-card);
+            padding: 32px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+        .summary-card::before {
+            content: '✦';
+            position: absolute;
+            top: -12px;
+            right: 24px;
+            font-size: 24px;
+            color: var(--color-secondary);
+        }
+        .summary-label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--color-primary);
+            margin-bottom: 12px;
+        }
+        .summary-text {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--color-text);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--color-muted);
+            font-size: 15px;
+            padding: 40px 0;
+        }
+        .loading {
+            text-align: center;
+            color: var(--color-muted);
+            font-size: 14px;
+            padding: 24px 0;
+        }
+
+        /* ============================================================
+           Footer
+           ============================================================ */
+        .footer {
+            border-top: 1px solid var(--color-border);
+            padding: 40px 48px;
+            text-align: center;
+        }
+        .footer-brand {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 20px;
+            color: var(--color-text);
+            margin-bottom: 6px;
+        }
+        .footer-bottom {
+            font-size: 13px;
+            color: var(--color-muted);
+        }
+
+        /* ============================================================
+           Responsive
+           ============================================================ */
+        @media (max-width: 1024px) {
+            .stats-row { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 14px 24px; }
+            .nav-links {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(253, 250, 245, 0.97);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 28px;
+                z-index: 99;
+            }
+            .nav-links.open { display: flex; }
+            .nav-toggle { display: flex; z-index: 101; }
+            .dashboard { padding: 100px 24px 60px; }
+            .card { padding: 24px; }
+            .footer { padding: 32px 24px; }
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Navigation bar -->
-    <nav class="navbar">
-        <a href="index.html" class="navbar-brand">MindLog</a>
-        <div class="navbar-links">
-            <a href="index.html">Journal</a>
+    <!-- ============================================================
+         Navbar
+         ============================================================ -->
+    <nav class="navbar" id="navbar">
+        <a href="/" class="navbar-brand">
+            <svg class="blob-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 10 C70 5, 92 20, 90 45 C88 68, 72 92, 50 90 C28 88, 8 70, 10 48 C12 24, 30 15, 50 10Z" fill="#4361EE"/>
+                <circle cx="38" cy="48" r="4" fill="#1A1A2E"/>
+                <circle cx="62" cy="48" r="4" fill="#1A1A2E"/>
+                <path d="M38 62 Q50 72 62 62" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/>
+            </svg>
+            Blobbi
+        </a>
+        <div class="nav-links" id="navLinks">
+            <a href="/">Journal</a>
             <a href="dashboard.html" class="active">Dashboard</a>
+            <a href="/#how-it-works">How it works</a>
+            <a href="/#journal" class="nav-cta">Start for free</a>
         </div>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
     </nav>
 
-    <div class="page">
+    <!-- ============================================================
+         Dashboard
+         ============================================================ -->
+    <main class="dashboard">
 
-        <!-- Page heading -->
-        <div class="page-heading">
-            <h1>Your patterns</h1>
-            <p>A look at your mood trends and cognitive distortions over time.</p>
+        <!-- Greeting -->
+        <div class="dash-header reveal">
+            <h1 class="dash-greeting" id="greeting">Good morning ✦</h1>
+            <p class="dash-date" id="today-date"></p>
         </div>
 
-        <!-- Mood over time chart -->
-        <div class="card">
-            <div class="card-title">Mood over time</div>
+        <!-- Stats Row -->
+        <div class="stats-row reveal" id="stats-row">
+            <div class="stat-pill">
+                <svg class="stat-blob" viewBox="0 0 100 100"><path d="M50 10 C70 5, 92 20, 90 45 C88 68, 72 92, 50 90 C28 88, 8 70, 10 48 C12 24, 30 15, 50 10Z" fill="#C8F542"/><circle cx="38" cy="48" r="4" fill="#1A1A2E"/><circle cx="62" cy="48" r="4" fill="#1A1A2E"/><path d="M38 62 Q50 72 62 62" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+                <div class="stat-info">
+                    <div class="stat-value" id="stat-streak">0</div>
+                    <div class="stat-label">day streak</div>
+                </div>
+            </div>
+            <div class="stat-pill">
+                <svg class="stat-blob" viewBox="0 0 100 100"><path d="M50 10 C70 5, 92 20, 90 45 C88 68, 72 92, 50 90 C28 88, 8 70, 10 48 C12 24, 30 15, 50 10Z" fill="#A8DAFF"/><circle cx="38" cy="48" r="4" fill="#1A1A2E"/><circle cx="62" cy="48" r="4" fill="#1A1A2E"/><path d="M38 62 Q50 72 62 62" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+                <div class="stat-info">
+                    <div class="stat-value" id="stat-week">0</div>
+                    <div class="stat-label">entries this week</div>
+                </div>
+            </div>
+            <div class="stat-pill">
+                <svg class="stat-blob" viewBox="0 0 100 100"><path d="M50 10 C70 5, 92 20, 90 45 C88 68, 72 92, 50 90 C28 88, 8 70, 10 48 C12 24, 30 15, 50 10Z" fill="#FF6B9D"/><circle cx="38" cy="48" r="4" fill="#1A1A2E"/><circle cx="62" cy="48" r="4" fill="#1A1A2E"/><path d="M36 60 Q50 76 64 60" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+                <div class="stat-info">
+                    <div class="stat-value" id="stat-avg">—</div>
+                    <div class="stat-label">avg mood</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mood Over Time Chart -->
+        <div class="card reveal">
+            <div class="card-header">
+                <h2 class="card-title">Mood this week</h2>
+                <span class="sticker sky">30 days</span>
+            </div>
             <div class="chart-container">
                 <canvas id="mood-chart"></canvas>
             </div>
         </div>
 
-        <!-- Distortion breakdown chart -->
-        <div class="card">
-            <div class="card-title">Distortion breakdown</div>
+        <!-- Distortion Breakdown -->
+        <div class="card reveal">
+            <div class="card-header">
+                <h2 class="card-title">Distortion breakdown</h2>
+                <span class="sticker pink">all time</span>
+            </div>
             <div class="chart-container">
                 <canvas id="distortion-chart"></canvas>
             </div>
         </div>
 
-        <!-- AI weekly summary -->
-        <div class="summary-card" id="summary-area">
+        <!-- AI Weekly Summary -->
+        <div class="summary-card reveal" id="summary-area">
+            <div class="summary-label">Weekly AI summary</div>
             <div class="loading">Generating summary…</div>
         </div>
 
-    </div>
+        <!-- Recent Entries -->
+        <div class="card reveal">
+            <div class="card-header">
+                <h2 class="card-title">Recent entries</h2>
+            </div>
+            <div id="recent-entries">
+                <div class="loading">Loading…</div>
+            </div>
+        </div>
 
+    </main>
+
+    <!-- ============================================================
+         Footer
+         ============================================================ -->
+    <footer class="footer">
+        <div class="footer-brand">Blobbi ˚✧</div>
+        <div class="footer-bottom">&copy; 2026 Blobbi. Not a replacement for professional therapy.</div>
+    </footer>
+
+    <!-- ============================================================
+         JavaScript
+         ============================================================ -->
     <script>
-        /**
-         * Load dashboard data from GET /api/dashboard,
-         * then render charts and request an AI summary.
-         */
+        // --- Navbar scroll ---
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 30);
+        }, { passive: true });
+
+        // --- Mobile menu ---
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.getElementById('navLinks');
+        navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => navLinks.classList.remove('open'));
+        });
+
+        // --- Scroll reveal ---
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // --- Greeting based on time ---
+        const hour = new Date().getHours();
+        let greetingText = 'Good evening';
+        if (hour < 12) greetingText = 'Good morning';
+        else if (hour < 17) greetingText = 'Good afternoon';
+
+        document.getElementById('greeting').textContent = greetingText + ' ✦';
+
+        // --- Today's date ---
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('today-date').textContent = now.toLocaleDateString('en-US', options);
+
+        // --- Accent colors for entries ---
+        const accentColors = ['cobalt', 'pink', 'lime', 'yellow'];
+
+        // --- Load dashboard ---
         async function loadDashboard() {
             try {
-                const res = await fetch("/api/dashboard");
-                if (!res.ok) throw new Error("Failed to load dashboard");
-
+                const res = await fetch('/api/dashboard');
+                if (!res.ok) throw new Error('Failed to load dashboard');
                 const data = await res.json();
 
                 renderMoodChart(data.mood_over_time);
                 renderDistortionChart(data.distortion_counts);
+                renderRecentEntries(data.last_7_entries);
+                computeStats(data);
                 generateSummary(data.last_7_entries);
             } catch (err) {
-                document.getElementById("summary-area").innerHTML =
-                    '<div class="empty-state" style="color:var(--red-text);">Failed to load dashboard data.</div>';
+                document.getElementById('summary-area').innerHTML =
+                    '<div class="empty-state" style="color:#c44;">Failed to load dashboard data.</div>';
             }
         }
 
-        /**
-         * Render a line chart of mood over time.
-         * Dates are reversed (newest first) for readability.
-         */
+        // --- Mood chart ---
         function renderMoodChart(moodData) {
-            const ctx = document.getElementById("mood-chart").getContext("2d");
-
-            // Reverse so oldest is on the left.
+            const ctx = document.getElementById('mood-chart').getContext('2d');
             const labels = moodData.map(d => d.date).reverse();
             const values = moodData.map(d => d.mood).reverse();
 
             new Chart(ctx, {
-                type: "line",
+                type: 'bar',
                 data: {
                     labels,
                     datasets: [{
-                        label: "Mood",
                         data: values,
-                        borderColor: "#7C6F9F",
-                        backgroundColor: "rgba(124, 111, 159, 0.08)",
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 3,
-                        pointBackgroundColor: "#7C6F9F",
-                        borderWidth: 2,
+                        backgroundColor: values.map(v => {
+                            if (v >= 8) return '#C8F542';
+                            if (v >= 6) return '#4361EE';
+                            if (v >= 4) return '#FFD166';
+                            return '#FF6B9D';
+                        }),
+                        borderRadius: 8,
+                        barThickness: 28,
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
                         x: {
-                            grid: { color: "#E2D9CE" },
+                            grid: { display: false },
                             ticks: {
-                                color: "#8C7E72",
-                                font: { family: "Inter", size: 11 },
+                                color: '#6B7A99',
+                                font: { family: "'Space Mono', monospace", size: 10 },
                                 maxRotation: 45,
                             },
                         },
                         y: {
-                            min: 1,
-                            max: 10,
+                            min: 1, max: 10,
                             ticks: {
                                 stepSize: 1,
-                                color: "#8C7E72",
-                                font: { family: "Inter", size: 11 },
+                                color: '#6B7A99',
+                                font: { family: "'Space Mono', monospace", size: 10 },
                             },
-                            grid: { color: "#E2D9CE" },
+                            grid: { color: '#E8E4F0' },
                         }
                     }
                 }
             });
         }
 
-        /**
-         * Render a horizontal bar chart of distortion frequency.
-         */
+        // --- Distortion chart ---
         function renderDistortionChart(counts) {
-            const ctx = document.getElementById("distortion-chart").getContext("2d");
-
+            const ctx = document.getElementById('distortion-chart').getContext('2d');
             const labels = Object.keys(counts);
             const values = Object.values(counts);
 
+            if (labels.length === 0) {
+                document.getElementById('distortion-chart').parentElement.innerHTML +=
+                    '<div class="empty-state">No distortions tracked yet.</div>';
+                return;
+            }
+
+            const colors = ['#4361EE', '#C8F542', '#FF6B9D', '#FFD166', '#A8DAFF', '#4361EE', '#FF6B9D', '#C8F542', '#FFD166'];
+
             new Chart(ctx, {
-                type: "bar",
+                type: 'bar',
                 data: {
                     labels,
                     datasets: [{
-                        label: "Occurrences",
                         data: values,
-                        backgroundColor: "#EDE9F5",
-                        borderColor: "#7C6F9F",
-                        borderWidth: 1,
-                        borderRadius: 6,
+                        backgroundColor: labels.map((_, i) => colors[i % colors.length]),
+                        borderRadius: 8,
                         barThickness: 20,
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    indexAxis: "y",
-                    plugins: {
-                        legend: { display: false },
-                    },
+                    indexAxis: 'y',
+                    plugins: { legend: { display: false } },
                     scales: {
                         x: {
                             beginAtZero: true,
-                            grid: { color: "#E2D9CE" },
+                            grid: { color: '#E8E4F0' },
                             ticks: {
-                                color: "#8C7E72",
-                                font: { family: "Inter", size: 11 },
+                                color: '#6B7A99',
+                                font: { family: "'Space Mono', monospace", size: 10 },
                                 stepSize: 1,
                             },
                         },
                         y: {
                             grid: { display: false },
                             ticks: {
-                                color: "#8C7E72",
-                                font: { family: "Inter", size: 12 },
+                                color: '#1A1A2E',
+                                font: { family: "'Nunito', sans-serif", size: 12 },
                             },
                         }
                     }
@@ -180,45 +690,104 @@
             });
         }
 
-        /**
-         * Send the last 7 entries to POST /api/summary and display the result.
-         */
-        async function generateSummary(last7) {
-            const area = document.getElementById("summary-area");
+        // --- Recent entries ---
+        function renderRecentEntries(entries) {
+            const container = document.getElementById('recent-entries');
 
-            if (last7.length === 0) {
-                area.innerHTML = '<div class="empty-state">Not enough entries for a summary yet. Keep journaling.</div>';
+            if (!entries || entries.length === 0) {
+                container.innerHTML = '<div class="empty-state">No entries yet. Start journaling!</div>';
+                return;
+            }
+
+            container.innerHTML = entries.map((e, i) => `
+                <div class="recent-entry">
+                    <div class="recent-entry-accent ${accentColors[i % accentColors.length]}"></div>
+                    <div class="recent-entry-content">
+                        <div class="recent-entry-thought">${escapeHtml(e.thought)}</div>
+                        <div class="recent-entry-meta">
+                            <span class="recent-entry-mood">mood: ${e.mood}</span>
+                            <span class="sticker ${['lime','pink','yellow','sky'][i % 4]}">${escapeHtml(e.distortion)}</span>
+                            <span class="recent-entry-date">${new Date(e.created_at).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- Compute stats ---
+        function computeStats(data) {
+            const entries = data.last_7_entries;
+
+            // Entries this week
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            const thisWeek = data.mood_over_time.filter(d => new Date(d.date) >= oneWeekAgo);
+            document.getElementById('stat-week').textContent = thisWeek.length;
+
+            // Avg mood
+            if (data.mood_over_time.length > 0) {
+                const avg = (data.mood_over_time.reduce((s, d) => s + d.mood, 0) / data.mood_over_time.length).toFixed(1);
+                document.getElementById('stat-avg').textContent = avg;
+            }
+
+            // Streak (consecutive days with entries)
+            const dates = data.mood_over_time.map(d => new Date(d.date));
+            let streak = 0;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            for (let i = 0; i < 365; i++) {
+                const check = new Date(today);
+                check.setDate(check.getDate() - i);
+                const found = dates.some(d => {
+                    const dd = new Date(d);
+                    dd.setHours(0, 0, 0, 0);
+                    return dd.getTime() === check.getTime();
+                });
+                if (found) streak++;
+                else break;
+            }
+            document.getElementById('stat-streak').textContent = streak;
+        }
+
+        // --- AI Summary ---
+        async function generateSummary(last7) {
+            const area = document.getElementById('summary-area');
+
+            if (!last7 || last7.length === 0) {
+                area.innerHTML = `
+                    <div class="summary-label">Weekly AI summary</div>
+                    <div class="empty-state">Not enough entries yet. Keep journaling!</div>
+                `;
                 return;
             }
 
             try {
-                const res = await fetch("/api/summary", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                const res = await fetch('/api/summary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(last7),
                 });
-
-                if (!res.ok) throw new Error("Failed to generate summary");
-
+                if (!res.ok) throw new Error('Failed');
                 const data = await res.json();
+
                 area.innerHTML = `
-                    <span class="summary-quote-mark">"</span>
+                    <div class="summary-label">Weekly AI summary</div>
                     <div class="summary-text">${escapeHtml(data.summary)}</div>
-                    <span class="summary-attribution">Generated by AI</span>
                 `;
             } catch (err) {
-                area.innerHTML = '<div class="empty-state" style="color:var(--red-text);">Could not generate summary.</div>';
+                area.innerHTML = `
+                    <div class="summary-label">Weekly AI summary</div>
+                    <div class="empty-state" style="color:#c44;">Could not generate summary.</div>
+                `;
             }
         }
 
-        /** Escape HTML to prevent XSS. */
         function escapeHtml(text) {
-            const div = document.createElement("div");
+            const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
-        // Load everything on page load.
         loadDashboard();
     </script>
 </body>
