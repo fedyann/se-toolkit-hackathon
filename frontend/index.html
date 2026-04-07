@@ -179,17 +179,17 @@
         .journal-header .section-label {
             font-family: var(--font-display);
             font-weight: 800;
-            font-size: clamp(28px, 3.5vw, 42px);
+            font-size: clamp(32px, 4vw, 48px);
             color: var(--color-text);
             letter-spacing: -0.02em;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
         .journal-header .section-title {
             font-family: var(--font-display);
             font-weight: 800;
-            font-size: clamp(28px, 3.5vw, 42px);
-            color: var(--color-text);
-            letter-spacing: -0.02em;
+            font-size: clamp(18px, 2.5vw, 24px);
+            color: var(--color-primary);
+            letter-spacing: -0.01em;
             margin-bottom: 8px;
         }
         .journal-header .section-desc { margin: 0 auto; }
@@ -498,27 +498,31 @@
            ============================================================ */
         .breathe-btn {
             position: fixed; bottom: 24px; right: 24px; z-index: 90;
-            font-family: var(--font-body); font-size: 16px; font-weight: 700;
-            color: #fff;
+            width: 80px; height: 56px;
             background: var(--color-primary);
-            padding: 18px 32px;
             border: none;
             cursor: pointer;
-            border-radius: 60px 60px 60px 60px / 40px 40px 60px 60px;
-            box-shadow: 0 4px 16px rgba(67, 97, 238, 0.3),
-                        inset 0 -4px 0 rgba(0,0,0,0.1);
+            border-radius: 28px;
+            box-shadow: 0 4px 16px rgba(67, 97, 238, 0.3);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            padding: 0;
         }
-        .breathe-btn::before {
+        .breathe-btn::before,
+        .breathe-btn::after {
             content: '';
             position: absolute;
-            top: -10px; left: 16px;
-            width: 28px; height: 28px;
             background: var(--color-primary);
             border-radius: 50%;
-            box-shadow: 20px -6px 0 4px var(--color-primary);
         }
-        .breathe-btn:hover { transform: scale(1.06); box-shadow: 0 8px 24px rgba(67, 97, 238, 0.4), inset 0 -4px 0 rgba(0,0,0,0.1); }
+        .breathe-btn::before {
+            width: 36px; height: 36px;
+            top: -18px; left: 12px;
+        }
+        .breathe-btn::after {
+            width: 28px; height: 28px;
+            top: -10px; left: 40px;
+        }
+        .breathe-btn:hover { transform: scale(1.08); box-shadow: 0 8px 24px rgba(67, 97, 238, 0.4); }
 
         .breathe-overlay {
             position: fixed; inset: 0; z-index: 1000;
@@ -529,33 +533,41 @@
         }
         .breathe-overlay.active { display: flex; }
 
+        .breathe-wrap {
+            position: relative;
+            width: 200px; height: 200px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .breathe-ring {
+            position: absolute;
+            width: 180px; height: 180px;
+            transform: rotate(-90deg);
+        }
+        .breathe-ring circle {
+            fill: none; stroke-width: 3; stroke-linecap: round;
+        }
+        .breathe-ring .ring-bg { stroke: var(--color-border); }
+        .breathe-ring .ring-progress {
+            stroke: var(--color-primary);
+            stroke-dasharray: 534; stroke-dashoffset: 534;
+            transition: stroke-dashoffset linear, stroke 0.5s ease;
+        }
+
         .breathe-blob {
-            width: 120px; height: 120px;
+            width: 100px; height: 100px;
+            transition-timing-function: ease-in-out;
         }
-        .breathe-blob path {
-            transition: fill 4s ease;
-        }
-        .breathe-blob {
-            transition: transform 4s ease-in-out;
-        }
-        .breathe-blob.inhale { transform: scale(1.6); }
-        .breathe-blob.inhale path { fill: #4361EE; }
-        .breathe-blob.hold-in { transform: scale(1.6); }
-        .breathe-blob.hold-in path { fill: #C8F542; }
-        .breathe-blob.exhale { transform: scale(1.0); }
-        .breathe-blob.exhale path { fill: #FF6B9D; }
-        .breathe-blob.hold-out { transform: scale(1.0); }
-        .breathe-blob.hold-out path { fill: #A8DAFF; }
+        .breathe-blob path { transition: fill ease-in-out; }
 
         .breathe-label {
             font-family: var(--font-display); font-weight: 800;
             font-size: clamp(28px, 4vw, 42px);
-            color: var(--color-text); margin-bottom: 32px;
+            color: var(--color-text); margin-top: 32px;
             transition: color 0.5s ease;
         }
         .breathe-counter {
             font-family: var(--font-mono); font-size: 14px;
-            color: var(--color-muted); margin-top: 24px;
+            color: var(--color-muted); margin-top: 12px;
         }
         .breathe-done {
             font-family: var(--font-body); font-size: 16px; font-weight: 700;
@@ -761,13 +773,20 @@
 
     <!-- Breath overlay -->
     <div class="breathe-overlay" id="breatheOverlay">
-        <div class="breathe-label" id="breatheLabel">inhale…</div>
-        <svg class="breathe-blob" id="breatheBlob" viewBox="0 0 100 100">
-            <path d="M50 8 C72 3, 95 18, 92 44 C89 70, 74 94, 50 92 C26 90, 6 72, 8 48 C10 22, 28 13, 50 8Z" fill="#4361EE"/>
-            <circle cx="36" cy="46" r="4.5" fill="#1A1A2E"/><circle cx="64" cy="46" r="4.5" fill="#1A1A2E"/>
-            <circle cx="37.5" cy="44.5" r="1.5" fill="#fff"/><circle cx="65.5" cy="44.5" r="1.5" fill="#fff"/>
-            <path d="M36 62 Q50 74 64 62" stroke="#1A1A2E" stroke-width="3" fill="none" stroke-linecap="round"/>
-        </svg>
+        <div class="breathe-wrap">
+            <svg class="breathe-ring" viewBox="0 0 180 180">
+                <circle class="ring-bg" cx="90" cy="90" r="85"/>
+                <circle class="ring-progress" id="ringProgress" cx="90" cy="90" r="85"/>
+            </svg>
+            <svg class="breathe-blob" id="breatheBlob" viewBox="0 0 100 100">
+                <path d="M50 8 C72 3, 95 18, 92 44 C89 70, 74 94, 50 92 C26 90, 6 72, 8 48 C10 22, 28 13, 50 8Z" fill="#4361EE"/>
+                <circle cx="42" cy="48" r="4" fill="#1A1A2E"/><circle cx="58" cy="48" r="4" fill="#1A1A2E"/>
+                <circle cx="43.5" cy="46.5" r="1.3" fill="#fff"/><circle cx="59.5" cy="46.5" r="1.3" fill="#fff"/>
+                <ellipse cx="32" cy="56" rx="5" ry="3" fill="#FF6B9D" opacity="0.35"/><ellipse cx="68" cy="56" rx="5" ry="3" fill="#FF6B9D" opacity="0.35"/>
+                <path d="M36 62 Q50 74 64 62" stroke="#1A1A2E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <div class="breathe-label" id="breatheLabel">Inhale</div>
         <div class="breathe-counter" id="breatheCounter">cycle 1 of 4</div>
         <button class="breathe-done" onclick="closeBreathe()">done</button>
     </div>
@@ -974,8 +993,9 @@
         loadEntries();
 
         // ====== FEATURE 3: Breath Bubble ======
-        let breatheInterval = null;
+        let breatheTimeout = null;
         let breatheCycle = 0;
+        const CIRCUMFERENCE = 2 * Math.PI * 85;
 
         function openBreathe() {
             document.getElementById('breatheOverlay').classList.add('active');
@@ -985,36 +1005,66 @@
 
         function closeBreathe() {
             document.getElementById('breatheOverlay').classList.remove('active');
-            if (breatheInterval) clearInterval(breatheInterval);
+            if (breatheTimeout) clearTimeout(breatheTimeout);
+        }
+
+        function setPhase(label, scale, fill, glowSize, glowColor, durationMs) {
+            const blob = document.getElementById('breatheBlob');
+            const path = blob.querySelector('path');
+            blob.style.transition = `transform ${durationMs}ms ease-in-out`;
+            blob.style.transform = `scale(${scale})`;
+            path.style.transition = `fill ${durationMs}ms ease-in-out`;
+            path.setAttribute('fill', fill);
+            blob.style.filter = `drop-shadow(0 0 ${glowSize}px ${glowColor})`;
+            document.getElementById('breatheLabel').textContent = label;
+
+            const ring = document.getElementById('ringProgress');
+            ring.style.transition = `stroke-dashoffset ${durationMs}ms linear, stroke 0.5s ease`;
+            ring.style.strokeDashoffset = '0';
+            ring.style.stroke = fill;
+        }
+
+        function resetRing() {
+            const ring = document.getElementById('ringProgress');
+            ring.style.transition = 'none';
+            ring.style.strokeDashoffset = String(CIRCUMFERENCE);
         }
 
         function runBreathCycle() {
-            const phases = [
-                { label: 'inhale…', cls: 'inhale' },
-                { label: 'hold…', cls: 'hold-in' },
-                { label: 'exhale…', cls: 'exhale' },
-                { label: 'hold…', cls: 'hold-out' },
-            ];
-            let phase = 0;
-
-            function tick() {
-                if (breatheCycle >= 4) {
-                    document.getElementById('breatheLabel').textContent = 'well done ✦';
-                    document.getElementById('breatheCounter').textContent = 'complete';
-                    return;
-                }
-                const p = phases[phase];
-                const blob = document.getElementById('breatheBlob');
-                blob.className = 'breathe-blob ' + p.cls;
-                document.getElementById('breatheLabel').textContent = p.label;
-                document.getElementById('breatheCounter').textContent = `cycle ${breatheCycle + 1} of 4`;
-                phase++;
-                if (phase >= 4) { phase = 0; breatheCycle++; }
+            if (breatheCycle >= 4) {
+                document.getElementById('breatheLabel').textContent = 'well done ✦';
+                document.getElementById('breatheCounter').textContent = 'complete';
+                return;
             }
 
-            tick();
-            if (breatheInterval) clearInterval(breatheInterval);
-            breatheInterval = setInterval(tick, 4000);
+            document.getElementById('breatheCounter').textContent = `cycle ${breatheCycle + 1} of 4`;
+
+            resetRing();
+            setPhase('Inhale', 1.3, '#4361EE', 32, '#4361EE66', 4000);
+            requestAnimationFrame(() => {
+                document.getElementById('ringProgress').style.strokeDashoffset = '0';
+            });
+
+            breatheTimeout = setTimeout(() => {
+                resetRing();
+                setPhase('Hold', 1.3, '#C8F542', 24, '#C8F54266', 2000);
+                requestAnimationFrame(() => {
+                    document.getElementById('ringProgress').style.strokeDashoffset = '0';
+                });
+
+                breatheTimeout = setTimeout(() => {
+                    resetRing();
+                    setPhase('Exhale', 1.0, '#A8DAFF', 8, '#A8DAFF33', 6000);
+                    requestAnimationFrame(() => {
+                        document.getElementById('ringProgress').style.strokeDashoffset = '0';
+                    });
+
+                    breatheTimeout = setTimeout(() => {
+                        breatheCycle++;
+                        runBreathCycle();
+                    }, 6000);
+                }, 2000);
+            }, 4000);
         }
     </script>
 </body>
