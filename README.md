@@ -35,7 +35,7 @@ habits.
 
 ## Features
 
-### Implemented (Version 1)
+### Implemented (Version 1 + 2)
 
 - ✅ Mood slider (1–10)
 - ✅ Text input for negative thoughts
@@ -45,13 +45,13 @@ habits.
 - ✅ List of past entries with mood, thought, distortion, reframe, and date
 - ✅ Dockerized deployment (FastAPI + PostgreSQL + Caddy)
 - ✅ Reverse proxy on port 42002
-
-### Planned (Version 2)
-
-- 📊 Dashboard page with mood-over-time line chart (Chart.js)
-- 📊 Distortion breakdown bar chart
-- 📝 Weekly AI summary ("What patterns do you notice?")
-- 📊 `GET /api/dashboard` and `POST /api/summary` endpoints
+- ✅ Dashboard page with mood-over-time line chart (Chart.js)
+- ✅ Distortion breakdown bar chart
+- ✅ Weekly AI summary ("What patterns do you notice?")
+- ✅ `GET /api/dashboard` and `POST /api/summary` endpoints
+- ✅ Emotion Weather visualization
+- ✅ Mood Pet with dynamic expressions
+- ✅ Micro Wins achievement system
 
 ## Tech Stack
 

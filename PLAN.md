@@ -38,24 +38,27 @@ A second page showing emotional patterns over time with charts and an
 AI-generated weekly summary.
 
 ### New Backend Endpoints
-- [ ] `GET /api/dashboard` — returns:
+- [x] `GET /api/dashboard` — returns:
   - `mood_over_time`: list of `{date, mood}` for the last 30 days
   - `distortion_counts`: dict of distortion name → count
   - `last_7_entries`: the 7 most recent entries (for summary context)
-- [ ] `POST /api/summary` — accepts last 7 entries, returns AI-generated
+- [x] `POST /api/summary` — accepts last 7 entries, returns AI-generated
   summary paragraph ("Based on these entries, what patterns do you notice?")
 
 ### New Frontend
-- [ ] `dashboard.html` with:
+- [x] `dashboard.html` with:
   - Line chart of mood over time (Chart.js from CDN)
   - Horizontal bar chart of distortion frequency
   - AI summary paragraph
+  - Emotion Weather visualization
+  - Mood Pet with dynamic expressions
+  - Micro Wins achievement cards
+  - Insight Whispers section
 
 ### Notes
-- The `GET /api/dashboard` and `POST /api/summary` endpoints are already
-  implemented in `backend/main.py` — they just need the frontend to use them.
-- The `dashboard.html` file is already scaffolded with Chart.js integration.
-- Version 2 is mostly a matter of testing and polishing the existing code.
+- All Version 2 endpoints are implemented and functional in `backend/main.py`.
+- The `dashboard.html` file includes Chart.js integration, animated visualizations,
+  and a complete UI matching the main journal page design.
 
 ---
 
