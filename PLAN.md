@@ -1,4 +1,4 @@
-# MindLog — Development Plan
+# Blobbi — Development Plan
 
 ## Version 1: Core Feature (Must Work End-to-End)
 
