@@ -1,4 +1,4 @@
-"""AI analysis — calls the Qwen LLM to identify distortions and generate reframes."""
+"""AI analysis — calls an OpenAI-compatible LLM to identify distortions and generate reframes."""
 
 import json
 import logging
@@ -8,9 +8,9 @@ from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
-# Configuration from environment variables.
-# Inside Docker, QWEN_API_BASE_URL should be http://qwen-code-api:42005/v1
-# From the VM shell, it's http://localhost:42005/v1
+# Configuration from environment variables. Works with any OpenAI-compatible
+# provider (Groq, Qwen Code API, OpenRouter, etc.) — see docker-compose.yml
+# and .env.example for the current defaults (Groq's free tier).
 QWEN_API_BASE_URL = os.getenv("QWEN_API_BASE_URL", "http://localhost:42005/v1")
 QWEN_API_KEY = os.getenv("QWEN_API_KEY", "unused")
 QWEN_MODEL = os.getenv("QWEN_MODEL", "coder-model")

@@ -23,15 +23,17 @@ services:
       - DB_NAME=${POSTGRES_DB:-mindlog}
       - DB_USER=${POSTGRES_USER:-postgres}
       - DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
-      # Qwen LLM API — use the Docker service name + container port (8080).
-      - QWEN_API_BASE_URL=http://qwen-code-api:8080/v1
-      - QWEN_API_KEY=${QWEN_CODE_API_KEY:-unused}
-      - QWEN_MODEL=${QWEN_CODE_API_MODEL:-coder-model}
+      # LLM API — OpenAI-compatible. Defaults to Groq's free tier.
+      # Point back at the local qwen-code-api container (see the
+      # `qwen-code-api` service below, profile "qwen") by setting
+      # LLM_API_BASE_URL=http://qwen-code-api:8080/v1 in .env if you
+      # get Qwen quota back.
+      - QWEN_API_BASE_URL=${LLM_API_BASE_URL:-https://api.groq.com/openai/v1}
+      - QWEN_API_KEY=${LLM_API_KEY:-unused}
+      - QWEN_MODEL=${LLM_MODEL:-llama-3.3-70b-versatile}
     depends_on:
       postgres:
         condition: service_healthy
-      qwen-code-api:
-        condition: service_started
 
   postgres:
     image: ${REGISTRY_PREFIX_DOCKER_HUB:-}postgres:16-alpine
@@ -65,10 +67,13 @@ services:
       - backend
 
   # Qwen Code API — provides the LLM via an OpenAI-compatible endpoint.
-  # This is the same service from lab-8. If you already have it running
-  # on the host, you can skip this and just set QWEN_API_BASE_URL to
-  # http://host.docker.internal:42005/v1 instead.
+  # This is the same service from lab-8. Not started by default (see
+  # LLM_API_BASE_URL above, which defaults to Groq instead). Bring it
+  # up explicitly with `docker compose --profile qwen up -d` once Qwen
+  # quota is available again, and set LLM_API_BASE_URL back to
+  # http://qwen-code-api:8080/v1 in .env.
   qwen-code-api:
+    profiles: ["qwen"]
     build:
       context: ./qwen-code-api
       args:
