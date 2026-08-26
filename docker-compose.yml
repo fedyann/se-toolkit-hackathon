@@ -24,14 +24,17 @@ services:
       - DB_NAME=${POSTGRES_DB:-mindlog}
       - DB_USER=${POSTGRES_USER:-postgres}
       - DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
-      # LLM API — OpenAI-compatible. Defaults to Groq's free tier.
+      # LLM API — OpenAI-compatible. Defaults to OpenRouter's free tier.
+      # (Groq's Cloudflare WAF blocks requests from hosting-provider ASNs
+      # like Railway's — returns Cloudflare error 1010 — so it doesn't
+      # work from cloud deployments even though it's fine for local dev.)
       # Point back at the local qwen-code-api container (see the
       # `qwen-code-api` service below, profile "qwen") by setting
       # LLM_API_BASE_URL=http://qwen-code-api:8080/v1 in .env if you
       # get Qwen quota back.
-      - QWEN_API_BASE_URL=${LLM_API_BASE_URL:-https://api.groq.com/openai/v1}
+      - QWEN_API_BASE_URL=${LLM_API_BASE_URL:-https://openrouter.ai/api/v1}
       - QWEN_API_KEY=${LLM_API_KEY:-unused}
-      - QWEN_MODEL=${LLM_MODEL:-llama-3.3-70b-versatile}
+      - QWEN_MODEL=${LLM_MODEL:-google/gemma-4-31b-it:free}
     depends_on:
       postgres:
         condition: service_healthy
