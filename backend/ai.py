@@ -10,12 +10,17 @@ logger = logging.getLogger(__name__)
 
 # Configuration from environment variables. Works with any OpenAI-compatible
 # provider (Groq, Qwen Code API, OpenRouter, etc.) — see docker-compose.yml
-# and .env.example for the current defaults (Groq's free tier).
+# and .env.example for the current defaults (OpenRouter's free tier).
 QWEN_API_BASE_URL = os.getenv("QWEN_API_BASE_URL", "http://localhost:42005/v1")
 QWEN_API_KEY = os.getenv("QWEN_API_KEY", "unused")
 QWEN_MODEL = os.getenv("QWEN_MODEL", "coder-model")
 
-client = OpenAI(base_url=QWEN_API_BASE_URL, api_key=QWEN_API_KEY)
+# max_retries=0: free-tier models on shared pools (e.g. OpenRouter) return
+# 429 with a 60s Retry-After header — the SDK's default retry behavior
+# would honor that and block the request for 1-3+ minutes, well past what
+# a browser fetch() waits for. Fail fast instead so callers hit the
+# built-in safe-fallback response quickly rather than timing out.
+client = OpenAI(base_url=QWEN_API_BASE_URL, api_key=QWEN_API_KEY, timeout=20.0, max_retries=0)
 
 SYSTEM_PROMPT = """\
 You are a CBT (Cognitive Behavioral Therapy) assistant. Your job is to analyze \
