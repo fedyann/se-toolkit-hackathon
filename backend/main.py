@@ -3,8 +3,11 @@
 import logging
 from datetime import datetime, date
 
+from pathlib import Path
+
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlmodel import select
 from sqlmodel.sql.expression import SelectOfScalar
 
@@ -150,3 +153,13 @@ def generate_summary(payload: list[EntryResponse]):
             summary="We couldn't generate a summary right now. "
                     "Keep logging your thoughts — patterns will become clearer over time."
         )
+
+
+# ---------------------------------------------------------------------------
+# Static frontend
+# ---------------------------------------------------------------------------
+# Serves frontend/ directly so a single service (this one) is enough to run
+# the whole app — no separate reverse proxy needed (e.g. on Railway). Mounted
+# last so it never shadows the /api/* routes above.
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
